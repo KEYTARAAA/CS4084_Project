@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/homenavigation"
+    app:startDestination="@id/feed">
+
+    <fragment
+        android:id="@+id/feed"
+        android:name="ie.ul.cs4084project.Feed"
+        android:label="fragment_feed"
+        tools:layout="@layout/fragment_feed" >
+        <action
+            android:id="@+id/action_feed_to_search"
+            app:destination="@id/search" />
+        <action
+            android:id="@+id/action_feed_to_settings"
+            app:destination="@id/settings" />
+        <action
+            android:id="@+id/action_feed_to_profile"
+            app:destination="@id/profile" />
+        <action
+            android:id="@+id/action_feed_to_notifications"
+            app:destination="@id/notifications" />
+    </fragment>
+    <fragment
+        android:id="@+id/search"
+        android:name="ie.ul.cs4084project.Search"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search" >
+        <action
+            android:id="@+id/action_search_to_feed"
+            app:destination="@id/feed" />
+        <action
+            android:id="@+id/action_search_to_settings"
+            app:destination="@id/settings" />
+        <action
+            android:id="@+id/action_search_to_profile"
+            app:destination="@id/profile" />
+        <action
+            android:id="@+id/action_search_to_notifications"
+            app:destination="@id/notifications" />
+    </fragment>
+    <fragment
+        android:id="@+id/settings"
+        android:name="ie.ul.cs4084project.settings"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" >
+        <action
+            android:id="@+id/action_settings_to_feed"
+            app:destination="@id/feed" />
+        <action
+            android:id="@+id/action_settings_to_search"
+            app:destination="@id/search" />
+        <action
+            android:id="@+id/action_settings_to_profile"
+            app:destination="@id/profile" />
+        <action
+            android:id="@+id/action_settings_to_notifications"
+            app:destination="@id/notifications" />
+    </fragment>
+    <fragment
+        android:id="@+id/profile"
+        android:name="ie.ul.cs4084project.profile"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_profile_to_search"
+            app:destination="@id/search" />
+        <action
+            android:id="@+id/action_profile_to_settings"
+            app:destination="@id/settings" />
+        <action
+            android:id="@+id/action_profile_to_feed"
+            app:destination="@id/feed" />
+        <action
+            android:id="@+id/action_profile_to_notifications"
+            app:destination="@id/notifications" />
+    </fragment>
+    <fragment
+        android:id="@+id/notifications"
+        android:name="ie.ul.cs4084project.notifications"
+        android:label="fragment_notifications"
+        tools:layout="@layout/fragment_notifications" >
+        <action
+            android:id="@+id/action_notifications_to_feed"
+            app:destination="@id/feed" />
+        <action
+            android:id="@+id/action_notifications_to_settings"
+            app:destination="@id/settings" />
+        <action
+            android:id="@+id/action_notifications_to_search"
+            app:destination="@id/search" />
+        <action
+            android:id="@+id/action_notifications_to_profile"
+            app:destination="@id/profile" />
+    </fragment>
+</navigation>
