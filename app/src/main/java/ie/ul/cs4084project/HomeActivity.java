@@ -1,28 +1,15 @@
 package ie.ul.cs4084project;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Adapter;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,48 +54,6 @@ public class HomeActivity extends AppCompatActivity {
 
         TabLayout tabLayout = findViewById(R.id.tabLayout);
 
-        /*TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(tabLayout, viewPager, new TabLayoutMediator.TabConfigurationStrategy() {
-            @Override
-            public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
-                if(position == 0) {
-                    tab.setTag("Settings");
-                    tab.setIcon(R.drawable.ic_settings);
-                }else if(position == 1) {
-                    tab.setTag("Search");
-                    tab.setIcon(R.drawable.ic_search);
-                }else if(position == 2) {
-                    tab.setTag("News Feed");
-                    tab.setIcon(R.drawable.ic_news_feed);
-                }else if(position == 3) {
-                    tab.setTag("Notifications");
-                    tab.setIcon(R.drawable.ic_notifications);
-                }else if(position == 4) {
-                    tab.setTag("Profile");
-                    tab.setIcon(R.drawable.ic_profile);
-                }
-            }
-        });
-
-
-    tabLayoutMediator.attach();
-
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                Toast.makeText(getApplicationContext(), tab.getTag().toString(), Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });*/
-
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.getTabAt(0).setIcon(R.drawable.ic_settings);
         tabLayout.getTabAt(0).setTag("Settings");
@@ -148,8 +93,6 @@ public class HomeActivity extends AppCompatActivity {
     public void post(View v) {
         feed.post(v);
     }
-//pageradapter
-    //timestamp+idposts
 
 
 }

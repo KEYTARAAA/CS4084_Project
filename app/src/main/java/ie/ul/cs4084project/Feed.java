@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,12 +50,10 @@ import com.google.firebase.storage.UploadTask;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +73,6 @@ public class Feed extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     private FirebaseFirestore db;
     private StorageReference storageReference;
-    private FirebaseAuth firebaseAuth;
     private Button postButton;
     private EditText postText;
     private ImageView postImage;
@@ -108,7 +106,6 @@ public class Feed extends Fragment {
         name = getActivity().getIntent().getStringExtra(MainActivity.NAME);
         id = getActivity().getIntent().getStringExtra(MainActivity.ID);;
         email = getActivity().getIntent().getStringExtra(MainActivity.EMAIL);
-       // constraintLayout = getView().findViewById(R.id.constraintLayout);
 
         DisplayMetrics metrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -217,7 +214,7 @@ public class Feed extends Fragment {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if(task.isSuccessful()) {
                             List<DocumentSnapshot> posts = task.getResult().getDocuments();
-                            if (posts.size()>5) {
+                            if (posts.size()>500000000) {
                                 System.out.println("Posts greater than 5");
                                 int tb = 0;
                                 for (int i = (posts.size() - 1); i > (posts.size() - 6); i--) {
@@ -233,6 +230,7 @@ public class Feed extends Fragment {
                                 for (int i = (posts.size() - 1); i >-1; i--) {
                                     DocumentSnapshot document = posts.get(i);
                                     if (!document.get("image").toString().equals("")) {
+
                                         ImageView imageView = new ImageView(getContext());
                                         new DownloadImageTask(imageView)
                                                 .execute(document.get("image").toString());
@@ -240,12 +238,9 @@ public class Feed extends Fragment {
                                         textView.setText(document.get("post").toString() + '\n' + '~' + document.get("name") + "\n\n");
 
 
-                                       /* ConstraintSet constraintSet = new ConstraintSet();
-                                        constraintSet.clone(constraintLayout);
-                                        constraintSet.connect(imageView.getId(),ConstraintSet.BOTTOM, textView.getId(),ConstraintSet.TOP,10);
-                                        constraintSet.applyTo(constraintLayout);*/
-
-                                        scrollView.addView(imageView);
+                                        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                        layoutParams.gravity = Gravity.CENTER_HORIZONTAL;
+                                        scrollView.addView(imageView, layoutParams);
                                         scrollView.addView(textView);
 
                                     } else{
@@ -290,7 +285,7 @@ public class Feed extends Fragment {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             compressor.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
             byte[] thumb = byteArrayOutputStream.toByteArray();
-            UploadTask image_past = storageReference.child("user_image").child(id + ".jpeg").putBytes(thumb);
+            UploadTask image_past = storageReference.child("user_image").child(System.currentTimeMillis()+"-"+id + ".jpeg").putBytes(thumb);
             image_past.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
