@@ -30,7 +30,9 @@ import java.util.List;
 public class HomeActivity extends AppCompatActivity {
     private static  String id;
     private static  String email;
-    private static  String name;
+    public static  String name;
+    List<Fragment> fragments;
+    Feed feed;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +41,7 @@ public class HomeActivity extends AppCompatActivity {
         id = intent.getStringExtra(MainActivity.ID);
         email = intent.getStringExtra(MainActivity.EMAIL);
         name = intent.getStringExtra(MainActivity.NAME);
+        feed = new Feed();
 
         List<Integer> images = new ArrayList<Integer>();
         images.add(R.drawable.icon_settings);
@@ -47,12 +50,12 @@ public class HomeActivity extends AppCompatActivity {
         images.add(R.drawable.icon_notifications);
         images.add(R.drawable.icon_profile);
 
-        List<Fragment> fragments = new ArrayList<Fragment>();
+        fragments = new ArrayList<Fragment>();
 
 
         fragments.add(new settings());
         fragments.add(new Search());
-        fragments.add(new Feed());
+        fragments.add(feed);
         fragments.add(new notifications());
         fragments.add(new profile());
 ////
@@ -60,7 +63,7 @@ public class HomeActivity extends AppCompatActivity {
 ////
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(),  fragments);
         ViewPager viewPager = findViewById(R.id.viewPager);
-        viewPager.setAdapter((PagerAdapter) adapter);
+        viewPager.setAdapter(adapter);
 
         TabLayout tabLayout = findViewById(R.id.tabLayout);
 
@@ -121,6 +124,9 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 Toast.makeText(getApplicationContext(), tab.getTag().toString(), Toast.LENGTH_SHORT).show();
+                if(tab.getTag().toString().equals("News Feed")){
+                    //feed.refresh();
+                }
             }
 
             @Override
@@ -133,6 +139,14 @@ public class HomeActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    public void addImage(View v) {
+        feed.addImage(v);
+    }
+
+    public void post(View v) {
+        feed.post(v);
     }
 //pageradapter
     //timestamp+idposts

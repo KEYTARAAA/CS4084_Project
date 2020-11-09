@@ -7,70 +7,74 @@
     android:layout_height="match_parent"
     tools:context=".Feed">
 
-    <ImageButton
-        android:id="@+id/imageButton7"
-        style="@android:style/Widget.Holo.ImageButton"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="32dp"
-        android:scaleType="fitXY"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/buttonSettingsTemp"
-        app:srcCompat="@drawable/icon_search" />
-
-    <ImageButton
-        android:id="@+id/imageButton"
-        style="@android:style/Widget.Holo.ImageButton"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="32dp"
-        android:scaleType="fitXY"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageButton6"
-        app:srcCompat="@drawable/icon_notifications" />
-
-    <ImageButton
-        android:id="@+id/imageButton6"
-        style="@android:style/Widget.Holo.ImageButton"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="32dp"
-        android:scaleType="fitXY"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageButton7"
-        app:srcCompat="@drawable/icon_news_feed" />
-
-    <ImageButton
-        android:id="@+id/buttonSettingsTemp"
-        style="@android:style/Widget.Holo.ImageButton"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:onClick="onClickSettings"
-        android:scaleType="fitXY"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/icon_settings" />
-
-    <ImageButton
-        android:id="@+id/imageButton8"
-        style="@android:style/Widget.Holo.ImageButton"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="32dp"
-        android:scaleType="fitXY"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageButton"
-        app:srcCompat="@drawable/icon_profile" />
-
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/FeedText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="post"
         android:text="Feed"
         android:textColor="@android:color/black"
         android:textSize="36sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.868" />
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/FeedText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <LinearLayout
+            android:id="@+id/scroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
+
+    <EditText
+        android:id="@+id/postText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="164dp"
+        android:layout_marginBottom="24dp"
+        android:ems="10"
+        android:hint="Post Something?"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/postButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginBottom="24dp"
+        android:onClick="post"
+        android:text="Post"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/postText" />
+
+    <ImageView
+        android:id="@+id/postImage"
+        android:layout_width="66dp"
+        android:layout_height="66dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginBottom="4dp"
+        android:clickable="true"
+        android:onClick="addImage"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/postText"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:src="@drawable/icon_search"
+        tools:visibility="visible" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
