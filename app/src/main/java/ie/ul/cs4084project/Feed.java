@@ -78,10 +78,7 @@ public class Feed extends Fragment {
     private ImageView postImage;
     private ProgressDialog progressDialog;
     private String id, name, email;
-    private int devicePixelWidth , devicePixelHeight;
-
-    private LinearLayout scrollView;
-    private ConstraintLayout constraintLayout;
+    private int devicePixelWidth;
 
     private Uri imageUri;
     private Bitmap compressor;
@@ -110,15 +107,7 @@ public class Feed extends Fragment {
         DisplayMetrics metrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
         devicePixelWidth = metrics.widthPixels;
-        devicePixelHeight = metrics.heightPixels;
         load10PostsI();
-    }
-
-    public void refresh(){
-        if(scrollView.getChildCount()>0) {
-            scrollView.removeAllViews();
-        }
-        //load10PostsI();
     }
 
     /**
@@ -154,7 +143,6 @@ public class Feed extends Fragment {
         // Inflate the layout for this fragment
 
         //scrollView = getView().findViewById(R.id.scroll);
-        constraintLayout = getActivity().findViewById(R.id.constraintLayout);
         return inflater.inflate(R.layout.fragment_feed, container, false);
     }
 

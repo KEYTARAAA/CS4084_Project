@@ -28,41 +28,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ViewPagerAdapter extends FragmentPagerAdapter {
-    private List<Integer> images;
     private List<Fragment> fragments;
-    //private FragmentManager supportFragmentManager;
-   /* @NonNull
-    @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_view_pager, parent, false);
-        class ViewPagerViewHolder extends RecyclerView.ViewHolder {
-            ViewPagerViewHolder(View itemView) {
-                super(itemView);
-            }
-        }
-        return new ViewPagerViewHolder(view);
-    }*/
-
-   /* @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        int curImage = images.get(position);
-       ImageView iv =  holder.itemView.findViewById(R.id.ivImage);
-       iv.setImageResource(curImage);
-    }*/
-
-    /*@Override
-    public int getItemCount() {
-        return images.size();
-    }*/
 
     public ViewPagerAdapter(FragmentManager supportFragmentManager, List<Fragment> fragments){
         super(supportFragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         this.fragments = fragments;
-        /*class ViewPagerViewHolder extends RecyclerView.ViewHolder {
-            ViewPagerViewHolder(View itemView) {
-                super(itemView);
-            }
-        }*/
     }
 
     @NonNull

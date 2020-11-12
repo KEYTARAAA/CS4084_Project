@@ -30,13 +30,6 @@ public class HomeActivity extends AppCompatActivity {
         name = intent.getStringExtra(MainActivity.NAME);
         feed = new Feed();
 
-        List<Integer> images = new ArrayList<Integer>();
-        images.add(R.drawable.icon_settings);
-        images.add(R.drawable.icon_search);
-        images.add(R.drawable.icon_news_feed);
-        images.add(R.drawable.icon_notifications);
-        images.add(R.drawable.icon_profile);
-
         fragments = new ArrayList<Fragment>();
 
 

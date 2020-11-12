@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/profile_set_up_navigation"
+    app:startDestination="@id/setUserType">
+
+    <fragment
+        android:id="@+id/setDisplayName"
+        android:name="ie.ul.cs4084project.SetDisplayName"
+        android:label="fragment_set_display_name"
+        tools:layout="@layout/fragment_set_display_name" >
+        <action
+            android:id="@+id/action_setDisplayName_to_summary"
+            app:destination="@id/summary" />
+    </fragment>
+    <fragment
+        android:id="@+id/setBio"
+        android:name="ie.ul.cs4084project.SetBio"
+        android:label="fragment_set_bio"
+        tools:layout="@layout/fragment_set_bio" >
+        <action
+            android:id="@+id/action_setBio_to_setProfilePicture"
+            app:destination="@id/setProfilePicture" />
+    </fragment>
+    <fragment
+        android:id="@+id/setUserType"
+        android:name="ie.ul.cs4084project.SetUserType"
+        android:label="fragment_set_user_type"
+        tools:layout="@layout/fragment_set_user_type" >
+        <action
+            android:id="@+id/action_setUserType_to_setDOB3"
+            app:destination="@id/setDOB" />
+    </fragment>
+    <fragment
+        android:id="@+id/setBasicInfo"
+        android:name="ie.ul.cs4084project.SetBasicInfo"
+        android:label="fragment_set_basic_info"
+        tools:layout="@layout/fragment_set_basic_info" >
+        <action
+            android:id="@+id/action_setBasicInfo_to_setBio"
+            app:destination="@id/setBio" />
+    </fragment>
+    <fragment
+        android:id="@+id/setProfilePicture"
+        android:name="ie.ul.cs4084project.SetProfilePicture"
+        android:label="fragment_set_profile_picture"
+        tools:layout="@layout/fragment_set_profile_picture" >
+        <action
+            android:id="@+id/action_setProfilePicture_to_setDisplayName"
+            app:destination="@id/setDisplayName" />
+    </fragment>
+    <fragment
+        android:id="@+id/summary"
+        android:name="ie.ul.cs4084project.Summary"
+        android:label="fragment_summary"
+        tools:layout="@layout/fragment_summary" />
+    <fragment
+        android:id="@+id/setDOB"
+        android:name="ie.ul.cs4084project.setDOB"
+        android:label="fragment_set_d_o_b"
+        tools:layout="@layout/fragment_set_d_o_b" >
+        <action
+            android:id="@+id/action_setDOB_to_setBasicInfo3"
+            app:destination="@id/setBasicInfo" />
+    </fragment>
+</navigation>
