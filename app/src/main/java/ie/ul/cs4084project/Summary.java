@@ -1,5 +1,7 @@
 package ie.ul.cs4084project;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Picture;
 import android.graphics.drawable.Drawable;
@@ -9,6 +11,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
@@ -18,16 +22,31 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import id.zelory.compressor.Compressor;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -44,7 +63,12 @@ public class Summary extends Fragment {
     // TODO: Rename and change types of parameters
 
     private List<Fragment> fragments;
-    private Bitmap bitmap;
+    private File profileFile;
+    private FileWriter fileWriter;
+    private Bitmap compressor;
+    private StorageReference storageReference;
+    private Uri imageUri, download_uri;
+    FileOutputStream fos;
 
     public Summary() {
         // Required empty public constructor
@@ -94,7 +118,7 @@ public class Summary extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager(),  fragments);
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager(), fragments);
         ViewPager viewPager = getActivity().findViewById(R.id.viewPagerSummary);
         viewPager.setAdapter(adapter);
 
@@ -113,11 +137,13 @@ public class Summary extends Fragment {
 
         ImageView imageView = getActivity().findViewById(R.id.imageViewSummary);
 
-        imageView.setImageURI(Uri.parse(getArguments().getString(ProfileSetUp.PROFILE_PIC)));
+        imageUri = Uri.parse(getArguments().getString(ProfileSetUp.PROFILE_PIC));
+
+        imageView.setImageURI(imageUri);
         DisplayMetrics metrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        imageView.getLayoutParams().width = (int)(metrics.widthPixels * 0.297619);
-        imageView.getLayoutParams().height = (int)(metrics.widthPixels * 0.297619);
+        imageView.getLayoutParams().width = (int) (metrics.widthPixels * 0.297619);
+        imageView.getLayoutParams().height = (int) (metrics.widthPixels * 0.297619);
         imageView.requestLayout();
 
         TextView textView = getActivity().findViewById(R.id.textViewName);
@@ -129,6 +155,87 @@ public class Summary extends Fragment {
         textView = getActivity().findViewById(R.id.textViewSummaryBio);
         textView.setText(getArguments().getString(ProfileSetUp.BIO));
 
+        Button button = getActivity().findViewById(R.id.buttonSummarySubmit);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                String id = "CM1111PBHATH";
+                storageReference = FirebaseStorage.getInstance().getReference();
+                uploadProfilePic();
+
+                String key = " = (" + System.currentTimeMillis() + "-";
+                String alphadex = "1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNMáéíóúÁÉÍÓÚ";
+                for (int i = 0; i < 10; i++) {
+                    int rand = (int) (Math.random() * (alphadex.length()));
+                    key += alphadex.charAt(rand);
+                }
+                key += ") = ";
+
+                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+                        PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(getContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+
+                } else {
+                            System.out.println("POOOOOOOP          POOOOOOOOP          POOOOOOOOOOP     DURLB"+download_uri);
+                            storageReference.child("profilesInfo")
+                                    .child(id+".txt")
+                                    .putBytes(("Key" + key +
+                                            "\nUser Type" + key + getArguments().getString(ProfileSetUp.USER_TYPE)+
+                                            "\nDate Of Birth" + key + getArguments().getString(ProfileSetUp.DOB)+
+                                            "\nAge" + key + getArguments().getString(ProfileSetUp.AGE)+
+                                            "\nGender" + key + getArguments().getString(ProfileSetUp.GENDER)+
+                                            "\nGoal" + key + getArguments().getString(ProfileSetUp.GOAL)+
+                                            "\nBio" + key + getArguments().getString(ProfileSetUp.BIO)+
+                                            "\nDisplay Name" + key + getArguments().getString(ProfileSetUp.DISPLAY_NAME)+
+                                            "\nProfie Pic" + key + "https://firebasestorage.googleapis.com/v0/b/cs4084-project-fae83.appspot.com/o/profilePics%2FCM1111PBHATH.jpeg?alt=media&token=a227c102-08f1-41ff-b95d-04a5432b5a1c"
+                                            ).getBytes());
+
+                }
+            }
+        });
+
+
+    }
+
+
+    private void uploadProfilePic() {
+        String id = "CM1111PBHATH";
+        DisplayMetrics metrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+        File newFile = new File(imageUri.getPath());
+        try {
+            compressor = new Compressor(getContext()).setMaxHeight((int) (metrics.widthPixels * 0.8))
+                    .setMaxWidth((int) (metrics.widthPixels * 0.8)).setQuality(50).compressToBitmap(newFile);
+        } catch (IOException e) {
+            Toast.makeText(getContext(), "Compression Error : " + e, Toast.LENGTH_SHORT);
+        }
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        compressor.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+        byte[] thumb = byteArrayOutputStream.toByteArray();
+        UploadTask image_past = storageReference.child("profilePics").child(id + ".jpeg").putBytes(thumb);
+        image_past.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                if (task.isSuccessful()) {
+                    uploadImage(task);
+                } else {
+                    String error = task.getException().getMessage();
+                    Toast.makeText(getContext(), "Image Error : " + error, Toast.LENGTH_SHORT);
+                }
+            }
+        });
+    }
+
+    private void uploadImage(Task<UploadTask.TaskSnapshot> task) {
+        if(task != null){
+            Task<Uri> urlTask = task.getResult().getStorage().getDownloadUrl();
+            while (!urlTask.isSuccessful());
+            download_uri = urlTask.getResult();
+        }else{
+            download_uri = imageUri;
+        }
     }
 }
