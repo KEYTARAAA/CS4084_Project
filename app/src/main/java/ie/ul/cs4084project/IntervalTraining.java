@@ -20,12 +20,12 @@ import android.widget.TextView;
 public class IntervalTraining extends AppCompatActivity {
 
     private String name, id, email;
-    private int sprintSeconds, sprintMinutes, restSeconds, restMinutes, rounds;
+    private int sprintSeconds, sprintMinutes, restSeconds, restMinutes, rounds, sprintRounds, roundNumber;
     private boolean start;
     private Button buttonStartPause, buttonFinish;
     private CountDownTimer countDownTimerSprint, countDownTimerRest, countDownTimerCurrent;
     private long timeLeftSprint, timeLeftRest, sprintTime, restTime, timeLeftCurrent;
-    private TextView mode, countDown;
+    private TextView mode, countDown, roundCount;
     private ConstraintLayout constraintLayout;
     private Vibrator vibrator;
     private static final long[] vibrationPatternSprintOver = {1,800,200,800,200,800};
@@ -45,8 +45,13 @@ public class IntervalTraining extends AppCompatActivity {
         sprintMinutes = intent.getIntExtra(TrainingIntervals.SPRINT_MINUTES, 0);
         restSeconds = intent.getIntExtra(TrainingIntervals.REST_SECONDS, 0);
         restMinutes = intent.getIntExtra(TrainingIntervals.REST_MINUTES, 0);
-        rounds = intent.getIntExtra(TrainingIntervals.ROUNDS, 3);
-        rounds += (rounds-1);
+        roundCount = findViewById(R.id.textViewIntervalTrainingRounds);
+        roundCount.setText("ROUND 0/"+rounds);
+        sprintRounds = intent.getIntExtra(TrainingIntervals.ROUNDS, 3);
+        roundCount.setText("ROUND 0/"+sprintRounds);
+        roundNumber = 0;
+
+        rounds = sprintRounds + (sprintRounds-1);
         start = true;
         countDown = findViewById(R.id.textViewCountdown);
         mode = findViewById(R.id.textViewMode);
@@ -97,7 +102,9 @@ public class IntervalTraining extends AppCompatActivity {
         start = true;
         buttonStartPause.setText("Pause");
         mode.setText("GO!");
+        roundNumber++;
         constraintLayout.setBackgroundColor(Color.GREEN);
+        roundCount.setText("ROUND "+roundNumber+"/"+sprintRounds);
         countDownTimerSprint = new CountDownTimer(timeLeftSprint, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
