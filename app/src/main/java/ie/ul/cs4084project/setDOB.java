@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.Spinner;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.Date;
@@ -83,8 +84,9 @@ public class setDOB extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        //userType =
-        //getArguments().getString(ProfileSetUp.USER_TYPE);
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        dOB = formatter.format(new Date());
+        age = "0";
         final DatePicker datePicker = getActivity().findViewById(R.id.datePickerSetDOB);
 
         datePicker.setOnDateChangedListener(new DatePicker.OnDateChangedListener() {

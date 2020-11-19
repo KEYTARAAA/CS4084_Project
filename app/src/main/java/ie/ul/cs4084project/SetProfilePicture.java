@@ -135,7 +135,12 @@ public class SetProfilePicture extends Fragment {
             @Override
             public void onClick(View v) {
                 Bundle bundle = getArguments();
-                bundle.putString(ProfileSetUp.PROFILE_PIC, imageUri.toString());
+                if(imageUri!=null) {
+                    bundle.putString(ProfileSetUp.PROFILE_PIC, imageUri.toString());
+                }else{
+
+                    bundle.putString(ProfileSetUp.PROFILE_PIC, null);
+                }
                 Navigation.findNavController(v).navigate(R.id.action_setProfilePicture_to_setDisplayName, bundle);
             }
         });

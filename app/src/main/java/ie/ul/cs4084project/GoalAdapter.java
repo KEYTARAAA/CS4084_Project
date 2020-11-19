@@ -37,7 +37,7 @@ public class GoalAdapter extends ArrayAdapter<GoalItem> {
         }
 
         ImageView imageView = convertView.findViewById(R.id.imageViewGender);
-        TextView textView = convertView.findViewById(R.id.textViewGoal);
+        TextView textView = convertView.findViewById(R.id.textViewGender);
         GoalItem currentItem = getItem(position);
         if(currentItem!=null){
              imageView.setImageResource(currentItem.getGoalImage());

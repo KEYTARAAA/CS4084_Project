@@ -12,9 +12,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link ProfileAbout#newInstance} factory method to

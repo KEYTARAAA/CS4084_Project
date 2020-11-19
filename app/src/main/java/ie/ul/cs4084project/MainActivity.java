@@ -12,6 +12,8 @@ import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,9 +23,11 @@ public class MainActivity extends AppCompatActivity {
     protected static final String ID = "ID";
     protected static final String EMAIL = "EMAIL";
     protected static final String NAME = "NAME";
+    private StorageReference storageReference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        storageReference = FirebaseStorage.getInstance().getReference().child("profilesInfo");;
         setContentView(R.layout.activity_main);
     }
 
@@ -48,7 +52,12 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra(NAME, "Me");
 
         Toast.makeText(this, "Sign in successful!", Toast.LENGTH_SHORT).show();
-        startActivity(intent);
+
+        //storageReference.
+
+        //if() {
+            startActivity(intent);
+        //}
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data){

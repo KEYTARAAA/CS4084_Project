@@ -31,6 +31,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -63,12 +64,11 @@ public class Summary extends Fragment {
     // TODO: Rename and change types of parameters
 
     private List<Fragment> fragments;
-    private File profileFile;
-    private FileWriter fileWriter;
     private Bitmap compressor;
     private StorageReference storageReference;
     private Uri imageUri, download_uri;
-    FileOutputStream fos;
+    private String name;
+    private FirebaseFirestore db;
 
     public Summary() {
         // Required empty public constructor
@@ -97,6 +97,7 @@ public class Summary extends Fragment {
         super.onCreate(savedInstanceState);
 
 
+        db = FirebaseFirestore.getInstance();
         fragments = new ArrayList<Fragment>();
 
         fragments.add(new ProfilePosts());
@@ -136,10 +137,14 @@ public class Summary extends Fragment {
 
 
         ImageView imageView = getActivity().findViewById(R.id.imageViewSummary);
+        if(getArguments().getString(ProfileSetUp.PROFILE_PIC)!=null) {
+            imageUri = Uri.parse(getArguments().getString(ProfileSetUp.PROFILE_PIC));
+            imageView.setImageURI(imageUri);
+        }else {
+            imageView.setImageResource(R.drawable.icon_profile);
+        }
 
-        imageUri = Uri.parse(getArguments().getString(ProfileSetUp.PROFILE_PIC));
 
-        imageView.setImageURI(imageUri);
         DisplayMetrics metrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
         imageView.getLayoutParams().width = (int) (metrics.widthPixels * 0.297619);
@@ -147,7 +152,8 @@ public class Summary extends Fragment {
         imageView.requestLayout();
 
         TextView textView = getActivity().findViewById(R.id.textViewName);
-        textView.setText("Claire Molloy");//getActivity().getIntent().getStringExtra(MainActivity.NAME));
+        name = "Claire Molloy";//getActivity().getIntent().getStringExtra(MainActivity.NAME));
+        textView.setText(name);
 
         textView = getActivity().findViewById(R.id.textViewDisplayName);
         textView.setText("@" + getArguments().getString(ProfileSetUp.DISPLAY_NAME));
@@ -178,21 +184,22 @@ public class Summary extends Fragment {
                     ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
 
                 } else {
-                            System.out.println("POOOOOOOP          POOOOOOOOP          POOOOOOOOOOP     DURLB"+download_uri);
                             storageReference.child("profilesInfo")
-                                    .child(id+".txt")
+                                    .child(id + "-" + name +"@" + getArguments().getString(ProfileSetUp.DISPLAY_NAME) +".txt")
                                     .putBytes(("Key" + key +
                                             "\nUser Type" + key + getArguments().getString(ProfileSetUp.USER_TYPE)+
+                                            "\nName" + key + name +
                                             "\nDate Of Birth" + key + getArguments().getString(ProfileSetUp.DOB)+
                                             "\nAge" + key + getArguments().getString(ProfileSetUp.AGE)+
                                             "\nGender" + key + getArguments().getString(ProfileSetUp.GENDER)+
                                             "\nGoal" + key + getArguments().getString(ProfileSetUp.GOAL)+
                                             "\nBio" + key + getArguments().getString(ProfileSetUp.BIO)+
                                             "\nDisplay Name" + key + getArguments().getString(ProfileSetUp.DISPLAY_NAME)+
-                                            "\nProfie Pic" + key + "https://firebasestorage.googleapis.com/v0/b/cs4084-project-fae83.appspot.com/o/profilePics%2FCM1111PBHATH.jpeg?alt=media&token=a227c102-08f1-41ff-b95d-04a5432b5a1c"
+                                            "\nProfie Pic" + key + download_uri
                                             ).getBytes());
 
                 }
+                db.collection("Profiles").document(id);
             }
         });
 

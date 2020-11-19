@@ -33,7 +33,7 @@ public class HomeActivity extends AppCompatActivity {
         fragments = new ArrayList<Fragment>();
 
 
-        fragments.add(new settings());
+        fragments.add(new settings(name, email, id));
         fragments.add(new Search());
         fragments.add(feed);
         fragments.add(new notifications());
