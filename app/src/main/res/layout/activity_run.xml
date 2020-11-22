@@ -9,8 +9,8 @@
     <fragment
         android:id="@+id/fragmentRun"
         android:name="ie.ul.cs4084project.RunFragment"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="386dp"
+        android:layout_height="369dp"
         app:layout_constraintBottom_toTopOf="@+id/textViewCurrentDistance"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -57,4 +57,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/fragmentRun" />
+
+    <ImageView
+        android:id="@+id/imageView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="525dp"
+        tools:srcCompat="@tools:sample/avatars" />
 </androidx.constraintlayout.widget.ConstraintLayout>

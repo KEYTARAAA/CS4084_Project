@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
@@ -11,30 +13,37 @@ import android.location.LocationManager;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.Chronometer;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.squareup.okhttp.internal.DiskLruCache;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Timer;
+import java.util.HashMap;
 
 import static android.content.Context.LOCATION_SERVICE;
 
@@ -55,10 +64,16 @@ public class RunFragment extends Fragment {
     private double currentD;
     private static DecimalFormat df2 = new DecimalFormat("#.##");
     private FusedLocationProviderClient client;
-    private int kmCounter, kmCheckPoint, sec, min, hour;
-    private Chronometer chronometer;
-    private Handler handler;
-    private long startTime, bufferTime, updateTime;
+    private int kmCounter;
+    int count = 0;
+    private String name, id, email;
+
+
+    public void setUp(String name, String id, String email){
+        this.name=name;
+        this.id=id;
+        this.email=email;
+    }
 
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
@@ -108,9 +123,12 @@ public class RunFragment extends Fragment {
                             MarkerOptions currentMO = new MarkerOptions().position(latLng).title("You are Here");
                             currentLocation = mMap.addMarker(currentMO);
                             currentLocation.setVisible(false);
+                            addMileStone();
                             if(start) {
                                 begin = false;
                                 all.add(startLocation.getPosition());
+                                addMileStone();
+                                kmCounter++;
                                 PolylineOptions polylineOptions = new PolylineOptions().addAll(all).color(Color.BLUE).width(5);
                                 currentPolyline = mMap.addPolyline(polylineOptions);
                             }
@@ -123,11 +141,12 @@ public class RunFragment extends Fragment {
                                 set = false;
                             }
                             if (currentD>=kmCounter) {
-                                MarkerOptions currentMO = new MarkerOptions().position(latLng).title(Integer.toString(kmCheckPoint)+" km");
+                                MarkerOptions currentMO = new MarkerOptions().position(latLng).title(Integer.toString(kmCounter)+" km");//Integer.toString(kmCheckPoint)+" km");
                                 currentLocation = mMap.addMarker(currentMO);
                                 currentLocation.setVisible(true);
-                                kmCounter+=1;
-                                kmCheckPoint++;
+                                addMileStone();
+                                kmCounter++;
+                                //kmCheckPoint++;
                                 set = true;
                             }else{
                             MarkerOptions currentMO = new MarkerOptions().position(latLng);
@@ -180,18 +199,17 @@ public class RunFragment extends Fragment {
         start = false;
         set = true;
         client = LocationServices.getFusedLocationProviderClient(getActivity());
-        kmCounter = 10;
-        kmCheckPoint = 1;
-
-        chronometer =  getActivity().findViewById(R.id.timer);
+        kmCounter = 0;
          currentDistance =  getActivity().findViewById(R.id.textViewCurrentDistance);
     }
 
 
-    public double getFullDistanceMethod(){
+    public double getMilestones(){
 
         return  getFullDistance(all);
     }
+
+
     private double getFullDistance(ArrayList<LatLng> all) {
         double full = 0;
         for (int i=1; i<all.size(); i++) {
@@ -206,6 +224,11 @@ public class RunFragment extends Fragment {
 
     public void start(){
         start = true;
+        all.add(startLocation.getPosition());
+        addMileStone();
+        kmCounter++;
+        PolylineOptions polylineOptions = new PolylineOptions().addAll(all).color(Color.BLUE).width(5);
+        currentPolyline = mMap.addPolyline(polylineOptions);
     }
 
     private double distance(double lat1, double lon1, double lat2, double lon2) {
@@ -216,7 +239,98 @@ public class RunFragment extends Fragment {
                 Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
                         Math.sin(dLon/2) * Math.sin(dLon/2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        double d = R * c;
-        return d;//* 1000;
-}/**/
+        double d = R * c; //km
+        return d;//* 1000 for m;
+    }/**/
+
+    private void addMileStone(){
+        ((Run)getActivity()).addMileStone(kmCounter);
+    }
+
+    public void finish() {
+
+        /*if (count == 0) {
+
+            LatLng testLL = new LatLng(52.663297, -8.578516);
+            MarkerOptions mo = new MarkerOptions().position(testLL).title("test");
+            Marker m = mMap.addMarker(mo);
+            all.add(testLL);
+            PolylineOptions po = new PolylineOptions().addAll(all);
+            mMap.addPolyline(po);
+            count++;
+        } else if (count == 1) {
+
+            LatLng testLL = new LatLng(52.665141, -8.579926);
+            MarkerOptions mo = new MarkerOptions().position(testLL).title("test");
+            Marker m = mMap.addMarker(mo);
+            all.add(testLL);
+            PolylineOptions po = new PolylineOptions().addAll(all);
+            mMap.addPolyline(po);
+            count++;
+        }else if (count == 2) {
+
+            LatLng testLL = new LatLng(52.666457, -8.570910);
+            MarkerOptions mo = new MarkerOptions().position(testLL).title("test");
+            Marker m = mMap.addMarker(mo);
+            all.add(testLL);
+            PolylineOptions po = new PolylineOptions().addAll(all);
+            mMap.addPolyline(po);
+            count++;
+        }else if (count == 3) {
+
+            LatLng testLL = new LatLng(52.662033, -8.568834);
+            MarkerOptions mo = new MarkerOptions().position(testLL).title("test");
+            Marker m = mMap.addMarker(mo);
+            all.add(testLL);
+            PolylineOptions po = new PolylineOptions().addAll(all);
+            mMap.addPolyline(po);
+            count++;
+        }
+        if(count>5){*/
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for (LatLng latLng : all) {
+            builder.include(latLng);
+        //}
+
+        LatLngBounds bounds = builder.build();
+        int padding = 50;
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+        mMap.moveCamera(cu);
+            GoogleMap.SnapshotReadyCallback callback = new GoogleMap.SnapshotReadyCallback() {
+                Bitmap bitmap;
+
+                @Override
+                public void onSnapshotReady(Bitmap snapshot) {
+                    bitmap = snapshot;
+                    try {
+                        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 90, byteArrayOutputStream);
+                        ImageView imageView = getActivity().findViewById(R.id.imageView9);
+                        imageView.setImageBitmap(bitmap);
+                        byte[] bytes = byteArrayOutputStream.toByteArray();
+                        Intent intent = new Intent(getActivity(), PostRunActivity.class);
+                        intent.putExtra(MainActivity.ID, id);
+                        intent.putExtra(MainActivity.EMAIL, email);
+                        intent.putExtra(MainActivity.NAME, name);
+                        Run run = (Run) getActivity();
+                        ArrayList<RunMilestone> runMilestones = run.getMilestones();
+                        String[] strings = new String[runMilestones.size()];
+                        for(int i=0; i<runMilestones.size(); i++){
+                            strings[i] = runMilestones.get(i).toString();
+                        }
+                        intent.putExtra(Run.MILESTONES, strings);
+
+                        //startActivity(intent);
+                        intent.putExtra(Run.RUN_PICTURE, bytes);
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            mMap.snapshot(callback);
+
+         }
+        //count++;
+    }
 }

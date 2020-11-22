@@ -13,14 +13,21 @@ import android.view.View;
 import android.widget.Chronometer;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLngBounds;
+
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Run extends AppCompatActivity {
+    public static final String MILESTONES = "MILESTONES";
+    public static final String RUN_PICTURE = "RUN_PICTURE";
     private RunFragment runFragment;
     private static DecimalFormat df2 = new DecimalFormat("#.##");
     private Chronometer chronometer;
     boolean start;
     private String name, id, email;
+    private ArrayList<RunMilestone> milestones;
 
 
     @Override
@@ -32,8 +39,10 @@ public class Run extends AppCompatActivity {
         email = intent.getStringExtra(MainActivity.EMAIL);
         id = intent.getStringExtra(MainActivity.ID);
         runFragment = (RunFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentRun);
+        runFragment.setUp(name, id, email);
         chronometer = findViewById(R.id.timer);
         start = true;
+        milestones = new ArrayList<RunMilestone>();
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PackageManager.PERMISSION_GRANTED);
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PackageManager.PERMISSION_GRANTED);
 
@@ -54,6 +63,7 @@ public class Run extends AppCompatActivity {
             });
             chronometer.setBase(SystemClock.elapsedRealtime());
             chronometer.setText("00 : 00 : 00");
+            chronometer.setBase(SystemClock.elapsedRealtime());
             chronometer.start();
             runFragment.start();
             start = false;
@@ -66,12 +76,32 @@ public class Run extends AppCompatActivity {
 
 
             chronometer.stop();
-        Intent intent = new Intent(this, HomeActivity.class);
+        /*Intent intent = new Intent(this, HomeActivity.class);
         intent.putExtra(MainActivity.ID, id);
         intent.putExtra(MainActivity.EMAIL, email);
         intent.putExtra(MainActivity.NAME, name);
 
         startActivity(intent);
+        */
+        runFragment.finish();
         }
 
+    public void addMileStone(double km){
+        long totalTime = SystemClock.elapsedRealtime() - chronometer.getBase();
+        if(km>0){
+            if(km % 1 == 0) {
+                long lapTime = totalTime - milestones.get((int) km -1).getTotalTime();
+                milestones.add(new RunMilestone(km, lapTime, totalTime));
+            }else {
+                long lapTime = totalTime - milestones.get(milestones.size()-1).getTotalTime();
+                milestones.add(new RunMilestone(km, lapTime, totalTime));
+            }
+        }else{
+            milestones.add(new RunMilestone(km, 0, 0));
+        }
+    }
+
+    public ArrayList<RunMilestone> getMilestones(){
+        return milestones;
+    }
 }
