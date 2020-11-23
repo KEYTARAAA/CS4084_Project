@@ -27,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
     protected static final String ID = "ID";
     protected static final String EMAIL = "EMAIL";
     protected static final String NAME = "NAME";
+    protected static final String PROFILE_PICTURE = "PROFILE_PICTURE";
+    protected static final String DISPLAY_NAME = "DISPLAY_NAME";
     private String name, id, email;
     private StorageReference storageReference;
     @Override

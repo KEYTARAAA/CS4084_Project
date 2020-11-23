@@ -43,7 +43,7 @@ public class ViewProfile extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<byte[]> task) {
                         bytes = task.getResult();
-                        fragments.add(new profile(new String(bytes, StandardCharsets.UTF_8)));
+                        fragments.add(new profile(new String(bytes, StandardCharsets.UTF_8), viewProfileId));
                         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(),  fragments);
                         ViewPager viewPager = findViewById(R.id.viewPagerViewProfile);
                         viewPager.setAdapter(adapter);

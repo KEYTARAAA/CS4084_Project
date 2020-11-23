@@ -47,9 +47,10 @@ public class ProfilePosts extends Fragment {
     private FirebaseFirestore db;
     private StorageReference storageReference;
     private LinearLayout scrollView;
+    private static String viewProfileId;
 
-    public ProfilePosts() {
-        // Required empty public constructor
+    public ProfilePosts(String viewProfileId) {
+        this.viewProfileId = viewProfileId;
     }
 
     /**
@@ -62,7 +63,7 @@ public class ProfilePosts extends Fragment {
      */
     // TODO: Rename and change types and number of parameters
     public static ProfilePosts newInstance(String param1, String param2) {
-        ProfilePosts fragment = new ProfilePosts();
+        ProfilePosts fragment = new ProfilePosts(viewProfileId);
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -93,8 +94,7 @@ public class ProfilePosts extends Fragment {
     }
 
     private void load(){
-
-        db.collection("Profiles").document(getActivity().getIntent().getStringExtra(MainActivity.ID)).
+        db.collection("Profiles").document(viewProfileId).
                 collection("Posts").get().addOnCompleteListener(
                 new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -105,6 +105,7 @@ public class ProfilePosts extends Fragment {
                                 DocumentSnapshot document = posts.get(i);
                                 if (!document.get("image").toString().equals("")) {
 
+                                    System.out.println("POOOOOOOOOOOOOOOOOOOOOOOOOOOOP "+ i + "->" + document.get("image").toString());
                                     ImageView imageView = new ImageView(getContext());
                                     new DownloadImageTask(imageView)
                                             .execute(document.get("image").toString());
@@ -124,6 +125,7 @@ public class ProfilePosts extends Fragment {
                                 }
                             }
                         }
+                        System.out.println("WEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE " + scrollView.getChildCount());
                     }
                 });
     }

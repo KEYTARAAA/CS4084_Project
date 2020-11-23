@@ -196,7 +196,7 @@ public class Feed extends Fragment {
 
         final LinearLayout scrollView = getView().findViewById(R.id.scroll);
         //scrollView.setLayoutManager(new LinearLayoutManager(getContext()));
-        db.collection("Pictures").get().addOnCompleteListener(
+        db.collection("Profiles").document(id).collection("News Feed").get().addOnCompleteListener(
                 new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -207,8 +207,6 @@ public class Feed extends Fragment {
                                 int tb = 0;
                                 for (int i = (posts.size() - 1); i > (posts.size() - 6); i--) {
                                     DocumentSnapshot document = posts.get(i);
-                                    System.out.println(document.getId());
-                                    System.out.println(document.getData());
                                     TextView p = new TextView(getContext());
                                     p.setText(document.get("post").toString() + '\n' + '~' + document.get("author") + "\n\n");
                                     scrollView.addView(p);
@@ -232,15 +230,11 @@ public class Feed extends Fragment {
                                         scrollView.addView(textView);
 
                                     } else{
-                                        System.out.println("Posting 1");
-                                        System.out.println("Posting 2");
                                         System.out.println(document.getId());
                                         System.out.println(document.getData());
                                         TextView p = new TextView(getContext());
-                                        System.out.println("Posting 3");
                                         p.setText(document.get("post").toString() + '\n' + '~' + document.get("name") + "\n\n");
                                         scrollView.addView(p);
-                                        System.out.println("Posting 4");
                                     }
                                 }
                             }
@@ -302,7 +296,7 @@ public class Feed extends Fragment {
         }else{
             download_uri = imageUri;
         }
-        Map<String,String> userData = new HashMap<String, String>();
+        final Map<String,String> userData = new HashMap<String, String>();
         userData.put("name", name);
         userData.put("email", email);
         userData.put("id", id);
@@ -336,6 +330,18 @@ public class Feed extends Fragment {
                         }
                     }
                 });
+
+        final String finalTime = time;
+        db.collection("Profiles").document(id).collection("Friends").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                List<DocumentSnapshot> friends = task.getResult().getDocuments();
+                for (DocumentSnapshot ds : friends) {
+                    String friendId = ds.get("ID").toString();
+                    db.collection("Profiles").document(friendId).collection("News Feed").document(finalTime).set(userData);
+                }
+            }
+        });
 
 
 

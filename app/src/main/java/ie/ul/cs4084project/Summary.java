@@ -70,8 +70,9 @@ public class Summary extends Fragment {
     private Bitmap compressor;
     private StorageReference storageReference;
     private Uri imageUri, download_uri;
-    private String name, email, id;
+    private String name, email, id, profilePicture, displayName;
     private FirebaseFirestore db;
+    private String dn;
 
     public Summary() {
         // Required empty public constructor
@@ -100,18 +101,18 @@ public class Summary extends Fragment {
         super.onCreate(savedInstanceState);
 
 
-        db = FirebaseFirestore.getInstance();
-        fragments = new ArrayList<Fragment>();
-
-        fragments.add(new ProfilePosts());
-        fragments.add(new ProfilePicsAndVids());
-        fragments.add(new ProfileAbout(getArguments()));
-        fragments.add(new ProfileFriends());
 
         Intent intent = getActivity().getIntent();
         name = intent.getStringExtra(MainActivity.NAME);
         email = intent.getStringExtra(MainActivity.EMAIL);
         id = intent.getStringExtra(MainActivity.ID);
+        db = FirebaseFirestore.getInstance();
+        fragments = new ArrayList<Fragment>();
+
+        fragments.add(new ProfilePosts(id));
+        fragments.add(new ProfilePicsAndVids());
+        fragments.add(new ProfileAbout(getArguments()));
+        fragments.add(new ProfileFriends(id));
     }
 
 
@@ -229,18 +230,13 @@ public class Summary extends Fragment {
 
         } else {
             Map<String, String> data = new HashMap<>();
-            String dn = getArguments().getString(ProfileSetUp.DISPLAY_NAME);
+            dn = getArguments().getString(ProfileSetUp.DISPLAY_NAME);
             data.put("Display Name", dn);
             data.put("ID", id);
             data.put("Name", name);
             data.put("Profile Picture", download_uri.toString());
             db.collection("Display Names").document(dn).set(data);
-            data = new HashMap<>();
-            data.put("Name", name);
-            data.put("ID", id);
-            data.put("Display Name", dn);
-            data.put("Profile Picture", download_uri.toString());
-            db.collection("Names").document(dn).set(data);
+            db.collection("Names").document(name).set(data);
             storageReference.child("profilesInfo")
                     .child(id + ".txt")
                     .putBytes(("User Type = " + getArguments().getString(ProfileSetUp.USER_TYPE)+
@@ -277,10 +273,11 @@ public class Summary extends Fragment {
         CollectionReference posts = db.collection("Profiles");
         Map<String, String> data = new HashMap<>();
         data.put("ID", id);
+        data.put("Name", name);
+        data.put("Display Name", dn);
+        data.put("Profile Picture", download_uri.toString());
         data.put("File", uri.toString());
         posts.document(id).set(data);
-        //db.collection("Profiles").document(id).;
-        //posts.document(id).collection("Friends");
 
 
         Intent intent = new Intent(getActivity(), HomeActivity.class);

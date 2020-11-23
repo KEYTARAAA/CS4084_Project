@@ -2,11 +2,13 @@ package ie.ul.cs4084project;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
@@ -14,13 +16,23 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,15 +45,19 @@ private boolean profileComplete = false;
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static String sViewProfileId, sId, sString;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private static String string;
+    private  String string;
     private String userType, name, dateOB, age, gender, goal, bio, displayName, profilePic;
     private ArrayList<Fragment> fragments;
+    private String viewProfileId, id;
+    private Button friend;
+    private FirebaseFirestore db;
 
-    public profile(String s) {
+    public profile(String s, String viewProfileId) {
          String[] array = s.split("\n");
         userType = array[0].substring(12);
         name = array[1].substring(7);
@@ -53,15 +69,7 @@ private boolean profileComplete = false;
         displayName = array[7].substring(15);
         profilePic = array[8].substring(18);
 
-        System.out.println(userType);
-        System.out.println(name);
-        System.out.println(dateOB);
-        System.out.println(age);
-        System.out.println(gender);
-        System.out.println(goal);
-        System.out.println(bio);
-        System.out.println(displayName);
-        System.out.println(profilePic);
+        this.viewProfileId = viewProfileId;
 
         Bundle bundle = new Bundle();
         bundle.putString(ProfileSetUp.USER_TYPE, userType);
@@ -85,47 +93,13 @@ private boolean profileComplete = false;
 
         fragments = new ArrayList<Fragment>();
 
-        fragments.add(new ProfilePosts());
+        fragments.add(new ProfilePosts(viewProfileId));
         fragments.add(new ProfilePicsAndVids());
         fragments.add(new ProfileAbout(bundle));
-        fragments.add(new ProfileFriends());
-        /*String poopPeep= "POOOOOOOOOOOOOOOOOOOOOOP " + key +" PEEEEEEEEEEEEEEEEEEEP";
-        String myRegexp = "\\b" + key + "\\b";
-        System.out.println(myRegexp);
-        String[] pp = poopPeep.split(myRegexp);
-
-        System.out.println("KEEEEEEEEEEEEYYYYYYYYYY"+ key+"YYYYY"+ pp[1]);
-        ArrayList<String[]> prof =new ArrayList<String[]>();
-        for (String str: array) {
-            String[] spl = str.split(key);
-            for (String ss: spl) {
-                System.out.println("CRAAAAAAAAAAAAAAAAAAAACK   " + ss);
-            }
-            prof.add(str.split(key));
-        }
-
-        for(int i=0; i<array.length; i++){
-            String str = array[i];
-            String[] spl = str.split(key);
-            //for (int j=0; j<spl.length; j++) {
-
-                System.out.println("CRAAAAAAAAAAAAAAAAAAAACK   " + array[i]);
-            //}
-            prof.add(spl);
-        }
-
-         userType = prof.get(1)[1];
-         name = prof.get(2)[1];
-         dateOB = prof.get(3)[1];
-         age = prof.get(4)[1];
-         gender = prof.get(5)[1];
-         goal = prof.get(6)[1];
-         bio = prof.get(7)[1];
-         displayName = prof.get(8)[1];
-         profilePic = prof.get(9)[1];
-
-
-        */
+        fragments.add(new ProfileFriends(viewProfileId));
+        sString = string;
+        sId = id;
+        sViewProfileId = viewProfileId;
     }
 
     /**
@@ -138,7 +112,7 @@ private boolean profileComplete = false;
      */
     // TODO: Rename and change types and number of parameters
     public static profile newInstance(String param1, String param2) {
-        profile fragment = new profile(string);
+        profile fragment = new profile(sString, sViewProfileId);
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -149,10 +123,8 @@ private boolean profileComplete = false;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        db = FirebaseFirestore.getInstance();
+        id = getActivity().getIntent().getStringExtra(MainActivity.ID);
     }
 
     @Override
@@ -171,6 +143,8 @@ private boolean profileComplete = false;
         new DownloadImageTask(imageView)
                 .execute(profilePic);
 
+        friend = getActivity().findViewById(R.id.buttonFriendProfile);
+        setFriend();
         TextView textView = getActivity().findViewById(R.id.textViewProfileDisplayName);
         textView.setText("@"+displayName);
         textView = getActivity().findViewById(R.id.textViewProfileName);
@@ -192,6 +166,82 @@ private boolean profileComplete = false;
         tabLayout.getTabAt(2).setTag("About Feed");
         tabLayout.getTabAt(3).setText("Friends");
         tabLayout.getTabAt(3).setTag("Friends");
+    }
+
+    private void setFriend(){
+
+        if(viewProfileId.compareTo(id) == 0){
+            friend.setVisibility(View.INVISIBLE);
+        }else {
+            checkFriends();
+        }
+
+
+    }
+
+    private void checkFriends(){
+        friend.setBackgroundColor(Color.rgb(0,255,0));
+        friend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Map<String, String> data = new HashMap();
+                data.put("Name", name);
+                data.put("Display Name", displayName);
+                data.put("ID", viewProfileId);
+                data.put("Profile Picture", profilePic);
+                db.collection("Profiles").document(id).collection("Friends")
+                        .document(viewProfileId).set(data);
+
+
+                 db.collection("Profiles").document(id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                     @Override
+                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                         DocumentSnapshot ds = task.getResult();
+                         String myProfilePicture = ds.get("Profile Picture").toString();
+                         String myName = ds.get("Name").toString();
+                         String myId = ds.get("ID").toString();
+                         String myDisplayName = ds.get("Display Name").toString();
+
+                         Map<String, String> myData = new HashMap<>();
+                         myData.put("Name", myName);
+                         myData.put("Display Name", myDisplayName);
+                         myData.put("ID", myId);
+                         myData.put("Profile Picture", myProfilePicture);
+                         db.collection("Profiles").document(viewProfileId).collection("Friends")
+                                 .document(id).set(myData);
+                         checkFriends();
+                     }
+                 });
+                checkFriends();
+            }
+        });
+        db.collection("Profiles").document(id).collection("Friends").
+                get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                List<DocumentSnapshot> friends = task.getResult().getDocuments();
+                for (DocumentSnapshot ds : friends) {
+                    String compare = ds.get("ID").toString();
+                    if(viewProfileId.compareToIgnoreCase(compare) == 0){
+                        friend.setBackgroundColor(Color.rgb(11, 140, 4));
+                        friend.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                db.collection("Profiles").document(viewProfileId).collection("Friends").
+                                        document(id).delete();
+                                db.collection("Profiles").document(id).collection("Friends").
+                                        document(viewProfileId).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        checkFriends();
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }
+            }
+        });
     }
 
 

@@ -69,7 +69,7 @@ public class HomeActivity extends AppCompatActivity {
         fragments.add(new Search());
         fragments.add(feed);
         fragments.add(new notifications());
-        fragments.add(new profile(new String(bytes, StandardCharsets.UTF_8)));
+        fragments.add(new profile(new String(bytes, StandardCharsets.UTF_8), id));//vpid
 ////
 
 ////

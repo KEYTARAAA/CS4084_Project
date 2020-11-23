@@ -1,5 +1,6 @@
 package ie.ul.cs4084project;
 
+import android.graphics.Color;
 import android.nfc.tech.NfcA;
 import android.os.Bundle;
 
@@ -92,8 +93,10 @@ public class SetDisplayName extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
+                go = true;
                 db.collection("Display Names").get().addOnCompleteListener(
                         new OnCompleteListener<QuerySnapshot>() {
+
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
@@ -110,6 +113,9 @@ public class SetDisplayName extends Fragment {
                                     bundle.putString(ProfileSetUp.DISPLAY_NAME, editText.getText().toString());
                                     Navigation.findNavController(v).navigate(R.id.action_setDisplayName_to_summary, bundle);
                                 }else {
+                                    editText.getText().clear();
+                                    editText.setHint("Display Name Taken");
+                                    editText.setHintTextColor(Color.RED);
                                     Toast.makeText(getContext(), "Display Name Taken", Toast.LENGTH_LONG);
                                 }
                             }
