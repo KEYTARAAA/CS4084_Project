@@ -1,5 +1,6 @@
 package ie.ul.cs4084project;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
@@ -9,8 +10,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +24,9 @@ public class HomeActivity extends AppCompatActivity {
     private static  String id;
     private static  String email;
     public static  String name;
+    private byte[] bytes;
     List<Fragment> fragments;
+    StorageReference storageReference;
     Feed feed;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +36,30 @@ public class HomeActivity extends AppCompatActivity {
         id = intent.getStringExtra(MainActivity.ID);
         email = intent.getStringExtra(MainActivity.EMAIL);
         name = intent.getStringExtra(MainActivity.NAME);
+        storageReference = FirebaseStorage.getInstance().getReference();
+
+        Task<byte[]> task = storageReference.child("profilesInfo")
+                .child(id + ".txt").getBytes(1000000000).addOnCompleteListener(new OnCompleteListener<byte[]>() {
+                    @Override
+                    public void onComplete(@NonNull Task<byte[]> task) {
+                        bytes = task.getResult();
+                        gotProfile();
+                    }
+                });
+
+
+
+    }
+
+    public void addImage(View v) {
+        feed.addImage(v);
+    }
+
+    public void post(View v) {
+        feed.post(v);
+    }
+
+    private void gotProfile(){
         feed = new Feed();
 
         fragments = new ArrayList<Fragment>();
@@ -37,7 +69,7 @@ public class HomeActivity extends AppCompatActivity {
         fragments.add(new Search());
         fragments.add(feed);
         fragments.add(new notifications());
-        fragments.add(new profile());
+        fragments.add(new profile(new String(bytes, StandardCharsets.UTF_8)));
 ////
 
 ////
@@ -77,14 +109,6 @@ public class HomeActivity extends AppCompatActivity {
 
             }
         });
-    }
-
-    public void addImage(View v) {
-        feed.addImage(v);
-    }
-
-    public void post(View v) {
-        feed.post(v);
     }
 
 

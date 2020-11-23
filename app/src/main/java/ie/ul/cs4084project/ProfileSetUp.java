@@ -32,10 +32,14 @@ public class ProfileSetUp extends AppCompatActivity {
     protected static final String DISPLAY_NAME = "DISPLAY_NAME";
     protected static final String GENDER_IMAGE = "GENDER_IMAGE";
     protected static final String GOAL_IMAGE = "GOAL_IMAGE";
-
+    protected String name, id, email;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_set_up);
+        Intent intent=getIntent();
+        name = intent.getStringExtra(MainActivity.NAME);
+        id = intent.getStringExtra(MainActivity.ID);
+        email = intent.getStringExtra(MainActivity.EMAIL);
     }
 }

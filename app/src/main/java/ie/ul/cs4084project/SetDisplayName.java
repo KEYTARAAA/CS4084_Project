@@ -8,11 +8,24 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,6 +42,8 @@ public class SetDisplayName extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private FirebaseFirestore db;
+    private boolean go;
 
     public SetDisplayName() {
         // Required empty public constructor
@@ -55,10 +70,8 @@ public class SetDisplayName extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        db = FirebaseFirestore.getInstance();
+        go = true;
     }
 
     @Override
@@ -73,12 +86,34 @@ public class SetDisplayName extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         final EditText editText = getActivity().findViewById(R.id.editTextSetDisplayName);
         Button button = getActivity().findViewById(R.id.buttonNextSetDisplayName);
+
+        db = FirebaseFirestore.getInstance();
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Bundle bundle = getArguments();
-                bundle.putString(ProfileSetUp.DISPLAY_NAME, editText.getText().toString());
-                Navigation.findNavController(v).navigate(R.id.action_setDisplayName_to_summary, bundle);
+            public void onClick(final View v) {
+                db.collection("Display Names").get().addOnCompleteListener(
+                        new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    List<DocumentSnapshot> posts = task.getResult().getDocuments();
+                                    for (int i = (posts.size() - 1); i > -1; i--) {
+                                        DocumentSnapshot document = posts.get(i);
+                                        if (document.get("Display Name").toString().compareToIgnoreCase(editText.getText().toString())==0) {
+                                            go = false;
+                                        }
+                                    }
+                                }
+                                if (go) {
+                                    Bundle bundle = getArguments();
+                                    bundle.putString(ProfileSetUp.DISPLAY_NAME, editText.getText().toString());
+                                    Navigation.findNavController(v).navigate(R.id.action_setDisplayName_to_summary, bundle);
+                                }else {
+                                    Toast.makeText(getContext(), "Display Name Taken", Toast.LENGTH_LONG);
+                                }
+                            }
+                        });
             }
         });
     }

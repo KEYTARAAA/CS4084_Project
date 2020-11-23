@@ -92,7 +92,7 @@ public class setDOB extends Fragment {
         datePicker.setOnDateChangedListener(new DatePicker.OnDateChangedListener() {
             @Override
             public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                dOB = dayOfMonth + "/" + monthOfYear + "/" + year;
+                dOB = dayOfMonth + "/" + (monthOfYear+1) + "/" + year;
                 LocalDate dateOB = LocalDate.of(year, monthOfYear+1, dayOfMonth);
                 LocalDate date = LocalDate.now();
                 Period period = Period.between(dateOB, date);

@@ -1,6 +1,7 @@
 package ie.ul.cs4084project;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Picture;
@@ -29,8 +30,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -67,7 +70,7 @@ public class Summary extends Fragment {
     private Bitmap compressor;
     private StorageReference storageReference;
     private Uri imageUri, download_uri;
-    private String name;
+    private String name, email, id;
     private FirebaseFirestore db;
 
     public Summary() {
@@ -104,6 +107,11 @@ public class Summary extends Fragment {
         fragments.add(new ProfilePicsAndVids());
         fragments.add(new ProfileAbout(getArguments()));
         fragments.add(new ProfileFriends());
+
+        Intent intent = getActivity().getIntent();
+        name = intent.getStringExtra(MainActivity.NAME);
+        email = intent.getStringExtra(MainActivity.EMAIL);
+        id = intent.getStringExtra(MainActivity.ID);
     }
 
 
@@ -152,7 +160,6 @@ public class Summary extends Fragment {
         imageView.requestLayout();
 
         TextView textView = getActivity().findViewById(R.id.textViewName);
-        name = "Claire Molloy";//getActivity().getIntent().getStringExtra(MainActivity.NAME));
         textView.setText(name);
 
         textView = getActivity().findViewById(R.id.textViewDisplayName);
@@ -165,50 +172,15 @@ public class Summary extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                String id = "CM1111PBHATH";
                 storageReference = FirebaseStorage.getInstance().getReference();
                 uploadProfilePic();
-
-                String key = " = (" + System.currentTimeMillis() + "-";
-                String alphadex = "1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNMáéíóúÁÉÍÓÚ";
-                for (int i = 0; i < 10; i++) {
-                    int rand = (int) (Math.random() * (alphadex.length()));
-                    key += alphadex.charAt(rand);
-                }
-                key += ") = ";
-
-                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
-                        PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(getContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
-                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-
-                } else {
-                            storageReference.child("profilesInfo")
-                                    .child(id + "-" + name +"@" + getArguments().getString(ProfileSetUp.DISPLAY_NAME) +".txt")
-                                    .putBytes(("Key" + key +
-                                            "\nUser Type" + key + getArguments().getString(ProfileSetUp.USER_TYPE)+
-                                            "\nName" + key + name +
-                                            "\nDate Of Birth" + key + getArguments().getString(ProfileSetUp.DOB)+
-                                            "\nAge" + key + getArguments().getString(ProfileSetUp.AGE)+
-                                            "\nGender" + key + getArguments().getString(ProfileSetUp.GENDER)+
-                                            "\nGoal" + key + getArguments().getString(ProfileSetUp.GOAL)+
-                                            "\nBio" + key + getArguments().getString(ProfileSetUp.BIO)+
-                                            "\nDisplay Name" + key + getArguments().getString(ProfileSetUp.DISPLAY_NAME)+
-                                            "\nProfie Pic" + key + download_uri
-                                            ).getBytes());
-
-                }
-                db.collection("Profiles").document(id);
             }
         });
-
-
     }
 
 
     private void uploadProfilePic() {
-        String id = "CM1111PBHATH";
+        //String id = "CM1111PBHATH";
         DisplayMetrics metrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
@@ -241,8 +213,82 @@ public class Summary extends Fragment {
             Task<Uri> urlTask = task.getResult().getStorage().getDownloadUrl();
             while (!urlTask.isSuccessful());
             download_uri = urlTask.getResult();
+            next();
         }else{
             download_uri = imageUri;
         }
+    }
+
+    private void next(){
+
+
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+                PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(getContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+
+        } else {
+            Map<String, String> data = new HashMap<>();
+            String dn = getArguments().getString(ProfileSetUp.DISPLAY_NAME);
+            data.put("Display Name", dn);
+            data.put("ID", id);
+            data.put("Name", name);
+            data.put("Profile Picture", download_uri.toString());
+            db.collection("Display Names").document(dn).set(data);
+            data = new HashMap<>();
+            data.put("Name", name);
+            data.put("ID", id);
+            data.put("Display Name", dn);
+            data.put("Profile Picture", download_uri.toString());
+            db.collection("Names").document(dn).set(data);
+            storageReference.child("profilesInfo")
+                    .child(id + ".txt")
+                    .putBytes(("User Type = " + getArguments().getString(ProfileSetUp.USER_TYPE)+
+                            "\nName = " + name +
+                            "\nDate Of Birth = " + getArguments().getString(ProfileSetUp.DOB)+
+                            "\nAge = " + getArguments().getString(ProfileSetUp.AGE)+
+                            "\nGender = " + getArguments().getString(ProfileSetUp.GENDER)+
+                            "\nGoal = " + getArguments().getString(ProfileSetUp.GOAL)+
+                            "\nBio = " + getArguments().getString(ProfileSetUp.BIO)+
+                            "\nDisplay Name = " + getArguments().getString(ProfileSetUp.DISPLAY_NAME)+
+                            "\nProfile Picture = " + download_uri
+                    ).getBytes()).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+
+
+                    Task<Uri> task1= storageReference.child("profilesInfo")
+                            .child(id + ".txt").getDownloadUrl();
+                    task1.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            done(uri);
+                        }
+                    });
+                }
+            });
+
+        }
+    }
+
+    private void done(Uri uri){
+
+
+        CollectionReference posts = db.collection("Profiles");
+        Map<String, String> data = new HashMap<>();
+        data.put("ID", id);
+        data.put("File", uri.toString());
+        posts.document(id).set(data);
+        //db.collection("Profiles").document(id).;
+        //posts.document(id).collection("Friends");
+
+
+        Intent intent = new Intent(getActivity(), HomeActivity.class);
+        intent.putExtra(MainActivity.ID, id);
+        intent.putExtra(MainActivity.EMAIL, email);
+        intent.putExtra(MainActivity.NAME, name);
+
+        Toast.makeText(getActivity(), "Sign in successful!", Toast.LENGTH_SHORT).show();
+        startActivity(intent);
     }
 }

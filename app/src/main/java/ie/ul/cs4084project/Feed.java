@@ -324,6 +324,21 @@ public class Feed extends Fragment {
         });
 
 
+        db.collection("Profiles").document(id).collection("Posts").document(time).set(userData).
+                addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()){
+                            progressDialog.dismiss();
+                            Toast.makeText(getContext(), "Upload Successful!", Toast.LENGTH_SHORT);
+                        }else{
+                            Toast.makeText(getContext(), "FireStore Error : "+task.getException().getMessage().toString(), Toast.LENGTH_SHORT);
+                        }
+                    }
+                });
+
+
+
         postText.setText("");
         postImage.setImageResource(R.drawable.ic_camera);
         imageUri = null;
@@ -356,6 +371,18 @@ public class Feed extends Fragment {
                     }
                 });
 
+        db.collection("Profiles").document(id).collection("Posts").document(time).set(userData).
+                addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()){
+                            progressDialog.dismiss();
+                            Toast.makeText(getContext(), "Upload Successful!", Toast.LENGTH_SHORT);
+                        }else{
+                            Toast.makeText(getContext(), "FireStore Error : "+task.getException().getMessage().toString(), Toast.LENGTH_SHORT);
+                        }
+                    }
+                });
 
         postText.setText("");
     }
