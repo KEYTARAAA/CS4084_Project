@@ -15,6 +15,8 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLngBounds;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +24,7 @@ import java.util.HashMap;
 public class Run extends AppCompatActivity {
     public static final String MILESTONES = "MILESTONES";
     public static final String RUN_PICTURE = "RUN_PICTURE";
+    public static final String TIME = "TIME";
     private RunFragment runFragment;
     private static DecimalFormat df2 = new DecimalFormat("#.##");
     private Chronometer chronometer;
@@ -43,6 +46,7 @@ public class Run extends AppCompatActivity {
         chronometer = findViewById(R.id.timer);
         start = true;
         milestones = new ArrayList<RunMilestone>();
+
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PackageManager.PERMISSION_GRANTED);
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PackageManager.PERMISSION_GRANTED);
 
@@ -74,16 +78,9 @@ public class Run extends AppCompatActivity {
 
     public void finish(View view){
 
-
+            String time = chronometer.getText().toString();
             chronometer.stop();
-        /*Intent intent = new Intent(this, HomeActivity.class);
-        intent.putExtra(MainActivity.ID, id);
-        intent.putExtra(MainActivity.EMAIL, email);
-        intent.putExtra(MainActivity.NAME, name);
-
-        startActivity(intent);
-        */
-        runFragment.finish();
+        runFragment.finish(time);
         }
 
     public void addMileStone(double km){
@@ -94,7 +91,8 @@ public class Run extends AppCompatActivity {
                 milestones.add(new RunMilestone(km, lapTime, totalTime));
             }else {
                 long lapTime = totalTime - milestones.get(milestones.size()-1).getTotalTime();
-                milestones.add(new RunMilestone(km, lapTime, totalTime));
+                BigDecimal bd = new BigDecimal(km).setScale(2, RoundingMode.HALF_UP);
+                milestones.add(new RunMilestone(bd.doubleValue(), lapTime, totalTime));
             }
         }else{
             milestones.add(new RunMilestone(km, 0, 0));

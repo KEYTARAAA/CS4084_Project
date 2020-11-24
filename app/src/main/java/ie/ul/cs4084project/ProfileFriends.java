@@ -202,7 +202,6 @@ public class ProfileFriends extends Fragment {
     }
 
     private void load(){
-        System.out.println("POOOOOOOOOOOOOOOOOOOOOOOOP" + viewProfileId);
         db.collection("Profiles").document(viewProfileId).collection("Friends").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -241,7 +240,6 @@ public class ProfileFriends extends Fragment {
                 }
 
         });
-        System.out.println("PEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEP" + viewProfileId);
     }
 
 private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {

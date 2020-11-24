@@ -105,7 +105,6 @@ public class ProfilePosts extends Fragment {
                                 DocumentSnapshot document = posts.get(i);
                                 if (!document.get("image").toString().equals("")) {
 
-                                    System.out.println("POOOOOOOOOOOOOOOOOOOOOOOOOOOOP "+ i + "->" + document.get("image").toString());
                                     ImageView imageView = new ImageView(getContext());
                                     new DownloadImageTask(imageView)
                                             .execute(document.get("image").toString());
@@ -125,7 +124,6 @@ public class ProfilePosts extends Fragment {
                                 }
                             }
                         }
-                        System.out.println("WEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE " + scrollView.getChildCount());
                     }
                 });
     }

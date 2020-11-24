@@ -45,10 +45,14 @@ public class PostRunActivity extends AppCompatActivity {
         linearLayout = findViewById(R.id.linearLayoutPostRun);
         milestones = new ArrayList<RunMilestone>();
         String[] strings = getIntent().getStringArrayExtra(Run.MILESTONES);
-        for (String s: strings) {
+        for(int i=0; i<(strings.length); i++){
+            String s = strings[i];
             milestones.add(new RunMilestone(s));
         }
         setFastestAndSlowest();
+
+        setTotalTimeDistance();
+
         for (RunMilestone r: milestones) {
             CardView cardView = new CardView(this);
             LinearLayout layout = new LinearLayout(this);
@@ -87,6 +91,27 @@ public class PostRunActivity extends AppCompatActivity {
         setAverageTime();
         setAverageSpeed();
 
+    }
+
+    private void setTotalTimeDistance(){
+        CardView cardView = new CardView(this);
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        cardView.addView(layout);
+        ViewGroup.MarginLayoutParams lp = new ViewGroup.MarginLayoutParams(ViewGroup.MarginLayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.bottomMargin = 20;
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        layout.setLayoutParams(layoutParams);
+        TextView textView = new TextView(this);
+        textView.setTextSize(50);
+        textView.setText("Total Distance: " + milestones.get(milestones.size()-1).getKm() +
+                "km\nTotal Time: "  +getIntent().getStringExtra(Run.TIME));
+        textView.setTextColor(Color.WHITE);
+        layout.addView(textView);
+        cardView.setCardBackgroundColor(Color.BLACK);
+        cardView.setCardElevation(10);
+        cardView.setRadius(100);
+        linearLayout.addView(cardView);
     }
 
     private void setAverageTime(){
@@ -155,16 +180,19 @@ public class PostRunActivity extends AppCompatActivity {
     }
 
     private long getAverageTime(){
-        long total = 0;
-        for (RunMilestone m: milestones) {
-            total+=m.getLapTimeLong();
-        }
+        long totalTime = 0;
+        double totalDistance  = milestones.get(milestones.size()-1).getKm();
+        String[] times = getIntent().getStringExtra(Run.TIME).split(":");
+        totalTime+= ((Integer.parseInt(times[0].substring(0,2))) * HOUR);
+        totalTime+= ((Integer.parseInt(times[1].substring(1,3))) * MINUTE);
+        totalTime+= ((Integer.parseInt(times[2].substring(1,3))) * SECOND);
 
-        long avg = total/milestones.size();
+        long avg = (long) (totalTime/totalDistance);
         return avg;
     }
 
     private String millsToTime(long time){
+
         long tot = time;
         int hours = 0;
         int mins = 0;
@@ -176,7 +204,7 @@ public class PostRunActivity extends AppCompatActivity {
         }
         mins =  (int) tot / MINUTE;
         tot %= MINUTE;
-        secs =  (int) tot / SECOND;
+        secs =  (int) tot/SECOND ;
         if (hours>0){
             t+=getLapTimeUnit(hours);
             t+=":";

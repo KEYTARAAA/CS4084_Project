@@ -64,7 +64,7 @@ public class RunFragment extends Fragment {
     private double currentD;
     private static DecimalFormat df2 = new DecimalFormat("#.##");
     private FusedLocationProviderClient client;
-    private int kmCounter;
+    private double kmCounter;
     int count = 0;
     private String name, id, email;
 
@@ -123,14 +123,8 @@ public class RunFragment extends Fragment {
                             MarkerOptions currentMO = new MarkerOptions().position(latLng).title("You are Here");
                             currentLocation = mMap.addMarker(currentMO);
                             currentLocation.setVisible(false);
-                            addMileStone();
                             if(start) {
                                 begin = false;
-                                all.add(startLocation.getPosition());
-                                addMileStone();
-                                kmCounter++;
-                                PolylineOptions polylineOptions = new PolylineOptions().addAll(all).color(Color.BLUE).width(5);
-                                currentPolyline = mMap.addPolyline(polylineOptions);
                             }
                         }else {
                             currentPolyline.remove();
@@ -141,7 +135,7 @@ public class RunFragment extends Fragment {
                                 set = false;
                             }
                             if (currentD>=kmCounter) {
-                                MarkerOptions currentMO = new MarkerOptions().position(latLng).title(Integer.toString(kmCounter)+" km");//Integer.toString(kmCheckPoint)+" km");
+                                MarkerOptions currentMO = new MarkerOptions().position(latLng).title(Double.toString(kmCounter)+" km");//Integer.toString(kmCheckPoint)+" km");
                                 currentLocation = mMap.addMarker(currentMO);
                                 currentLocation.setVisible(true);
                                 addMileStone();
@@ -247,7 +241,11 @@ public class RunFragment extends Fragment {
         ((Run)getActivity()).addMileStone(kmCounter);
     }
 
-    public void finish() {
+    public void finish(final String time) {
+
+        //all.add(currentLocation.getPosition());
+        kmCounter = currentD;
+        addMileStone();
 
         /*if (count == 0) {
 
@@ -287,7 +285,8 @@ public class RunFragment extends Fragment {
             count++;
         }
         if(count>5){*/
-            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();// To make faster only add the 4 milestones on most nirthernlyy, westernly.. ect
         for (LatLng latLng : all) {
             builder.include(latLng);
         //}
@@ -305,8 +304,6 @@ public class RunFragment extends Fragment {
                     try {
                         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                         bitmap.compress(Bitmap.CompressFormat.PNG, 90, byteArrayOutputStream);
-                        ImageView imageView = getActivity().findViewById(R.id.imageView9);
-                        imageView.setImageBitmap(bitmap);
                         byte[] bytes = byteArrayOutputStream.toByteArray();
                         Intent intent = new Intent(getActivity(), PostRunActivity.class);
                         intent.putExtra(MainActivity.ID, id);
@@ -322,6 +319,7 @@ public class RunFragment extends Fragment {
 
                         //startActivity(intent);
                         intent.putExtra(Run.RUN_PICTURE, bytes);
+                        intent. putExtra(Run.TIME, time);
                         startActivity(intent);
                     } catch (Exception e) {
                         e.printStackTrace();
