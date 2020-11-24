@@ -77,8 +77,8 @@ public class PostRunActivity extends AppCompatActivity {
             layout.addView(textView);
             cardView.setCardBackgroundColor(Color.YELLOW);
             cardView.setCardElevation(10);
-            cardView.setRadius(100);
             cardView.setElevation(10);
+            cardView.setRadius(100);
 
             if(r.getFastest()){
                 cardView.setCardBackgroundColor(Color.GREEN);
@@ -95,6 +95,7 @@ public class PostRunActivity extends AppCompatActivity {
 
     private void setTotalTimeDistance(){
         CardView cardView = new CardView(this);
+
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
         cardView.addView(layout);

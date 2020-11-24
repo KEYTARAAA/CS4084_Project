@@ -53,9 +53,10 @@ private boolean profileComplete = false;
     private  String string;
     private String userType, name, dateOB, age, gender, goal, bio, displayName, profilePic;
     private ArrayList<Fragment> fragments;
-    private String viewProfileId, id;
-    private Button friend;
+    private String viewProfileId, id, newKey, key;
+    private Button friend, reject;
     private FirebaseFirestore db;
+    private boolean done;
 
     public profile(String s, String viewProfileId) {
          String[] array = s.split("\n");
@@ -125,6 +126,7 @@ private boolean profileComplete = false;
         super.onCreate(savedInstanceState);
         db = FirebaseFirestore.getInstance();
         id = getActivity().getIntent().getStringExtra(MainActivity.ID);
+        done = false;
     }
 
     @Override
@@ -143,7 +145,10 @@ private boolean profileComplete = false;
         new DownloadImageTask(imageView)
                 .execute(profilePic);
 
+        newKey = id + "-" + System.currentTimeMillis();
+
         friend = getActivity().findViewById(R.id.buttonFriendProfile);
+        reject = getActivity().findViewById(R.id.buttonRejectProfile);
         setFriend();
         TextView textView = getActivity().findViewById(R.id.textViewProfileDisplayName);
         textView.setText("@"+displayName);
@@ -169,7 +174,7 @@ private boolean profileComplete = false;
     }
 
     private void setFriend(){
-
+        reject.setVisibility(View.INVISIBLE);
         if(viewProfileId.compareTo(id) == 0){
             friend.setVisibility(View.INVISIBLE);
         }else {
@@ -184,7 +189,8 @@ private boolean profileComplete = false;
         friend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Map<String, String> data = new HashMap();
+                sendRequest();
+                /*Map<String, String> data = new HashMap();
                 data.put("Name", name);
                 data.put("Display Name", displayName);
                 data.put("ID", viewProfileId);
@@ -212,9 +218,22 @@ private boolean profileComplete = false;
                          checkFriends();
                      }
                  });
-                checkFriends();
+                checkFriends();*/
             }
         });
+
+        checkAlreadyFriends();
+        if(!done) {
+            checkPending();
+        }
+        if(!done) {
+            checkUnanswered();
+        }
+        done = false;
+
+    }
+
+    private void checkAlreadyFriends(){
         db.collection("Profiles").document(id).collection("Friends").
                 get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -224,6 +243,7 @@ private boolean profileComplete = false;
                     String compare = ds.get("ID").toString();
                     if(viewProfileId.compareToIgnoreCase(compare) == 0){
                         friend.setBackgroundColor(Color.rgb(11, 140, 4));
+                        done = true;
                         friend.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -240,6 +260,216 @@ private boolean profileComplete = false;
                         });
                     }
                 }
+            }
+        });
+    }
+
+    private void checkPending(){
+        db.collection("Profiles").document(id).collection("Pending Friend Requests").
+                get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                List<DocumentSnapshot> friends = task.getResult().getDocuments();
+                for (DocumentSnapshot ds : friends) {
+                    String compare = ds.get("ID").toString();
+                    if(viewProfileId.compareToIgnoreCase(compare) == 0){
+                        friend.setBackgroundColor(Color.rgb(11, 140, 4));
+                        friend.setText("Pending");
+                        key = ds.get("Key").toString();
+                        done = true;
+                        friend.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                db.collection("Profiles").document(viewProfileId).collection("Unanswered Friend Requests").
+                                        document(id).delete();
+                                db.collection("Profiles").document(viewProfileId).collection("Notifications").
+                                        document(key).delete();
+                                db.collection("Profiles").document(id).collection("Pending Friend Requests").
+                                        document(viewProfileId).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        checkFriends();
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }
+            }
+        });
+    }
+
+    private void checkUnanswered(){
+        db.collection("Profiles").document(id).collection("Unanswered Friend Requests").
+                get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                List<DocumentSnapshot> friends = task.getResult().getDocuments();
+                for (DocumentSnapshot ds : friends) {
+                    String compare = ds.get("ID").toString();
+                    if(viewProfileId.compareToIgnoreCase(compare) == 0){
+                        friend.setBackgroundColor(Color.rgb(0, 225, 0));
+                        friend.setText("Confirm");
+                        setReject();
+                        done = true;
+                        friend.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                addFriend();
+                            }
+                        });
+                    }
+                }
+            }
+        });
+    }
+
+    private void setReject(){
+        reject.setVisibility(View.VISIBLE);
+        reject.setBackgroundColor(Color.rgb(11, 140, 4));
+        reject.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                db.collection("Profiles").document(id).collection("Pending Friend Requests").document(viewProfileId).
+                        get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        DocumentSnapshot ds = task.getResult();
+
+                                reject.setVisibility(View.INVISIBLE);
+                               key = ds.get("Key").toString();
+                                        db.collection("Profiles").document(viewProfileId).collection("Unanswered Friend Requests").
+                                                document(id).delete();
+                                        db.collection("Profiles").document(viewProfileId).collection("Notifications").
+                                                document(key).delete();
+                                        db.collection("Profiles").document(id).collection("Pending Friend Requests").
+                                                document(viewProfileId).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                checkFriends();
+                                            }
+                                        });
+
+
+                    }
+                });
+            }
+        });
+    }
+
+    private void addFriend(){
+        Map<String, String> data = new HashMap();
+        data.put("Name", name);
+        data.put("Display Name", displayName);
+        data.put("ID", viewProfileId);
+        data.put("Profile Picture", profilePic);
+        db.collection("Profiles").document(id).collection("Friends")
+                .document(viewProfileId).set(data);
+
+        changeNotification();
+
+        db.collection("Profiles").document(id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot ds = task.getResult();
+                String myProfilePicture = ds.get("Profile Picture").toString();
+                String myName = ds.get("Name").toString();
+                String myId = ds.get("ID").toString();
+                String myDisplayName = ds.get("Display Name").toString();
+
+                Map<String, String> myData = new HashMap<>();
+                myData.put("Name", myName);
+                myData.put("Display Name", myDisplayName);
+                myData.put("ID", myId);
+                myData.put("Profile Picture", myProfilePicture);
+                db.collection("Profiles").document(viewProfileId).collection("Friends")
+                        .document(id).set(myData);
+                checkFriends();
+            }
+        });
+    }
+
+    private void sendRequest(){
+        Map<String, String> data = new HashMap();
+        data.put("Name", name);
+        data.put("Display Name", displayName);
+        data.put("ID", viewProfileId);
+        data.put("Profile Picture", profilePic);
+        data.put("Key", newKey);
+        db.collection("Profiles").document(id).collection("Pending Friend Requests")
+                .document(viewProfileId).set(data);
+
+
+        db.collection("Profiles").document(id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot ds = task.getResult();
+                String myProfilePicture = ds.get("Profile Picture").toString();
+                String myName = ds.get("Name").toString();
+                String myId = ds.get("ID").toString();
+                String myDisplayName = ds.get("Display Name").toString();
+
+                Map<String, String> myData = new HashMap<>();
+                myData.put("Name", myName);
+                myData.put("Display Name", myDisplayName);
+                myData.put("ID", myId);
+                myData.put("Profile Picture", myProfilePicture);
+                myData.put("Key", newKey);
+                db.collection("Profiles").document(viewProfileId).collection("Unanswered Friend Requests")
+                        .document(id).set(myData);
+                myData.put("Type", "Friend Request");
+                myData.put("Seen", "false");
+                db.collection("Profiles").document(viewProfileId).collection("Notifications")
+                        .document(newKey).set(myData);
+                checkFriends();
+
+            }
+        });
+    }
+
+    private void changeNotification(){
+        newKey = id +"-" + System.currentTimeMillis();
+        db.collection("Profiles").document(id).collection("Unanswered Friend Requests")
+                .document(viewProfileId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot ds = task.getResult();
+                key = ds.get("Key").toString();
+
+                Map<String, String> data = new HashMap<>();
+                data.put("Key", newKey);
+                data.put("Type", "Friend Request Accepted");
+                data.put("Seen", "false");
+                data.put("Name", ds.get("Name").toString());
+                data.put("Display Name", ds.get("Display Name").toString());
+                data.put("ID", ds.get("ID").toString());
+                data.put("Profile Picture", ds.get("Profile Picture").toString());
+                db.collection("Profiles").document(id).collection("Notifications")
+                        .document(newKey).set(data);
+                db.collection("Profiles").document(id).collection("Notifications").document(key).delete();//maybe too fast
+                db.collection("Profiles").document(id).collection("Unanswered Friend Requests").document(viewProfileId).delete();
+                db.collection("Profiles").document(viewProfileId).collection("Pending Friend Requests").document(id).delete();
+
+
+            }
+        });//set notification in theirs aswel
+
+        db.collection("Profiles").document(id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot ds = task.getResult();
+                Map<String, String> data = new HashMap<>();
+                data.put("Key", newKey);
+                data.put("Type", "Friend Request Accepted");
+                data.put("Seen", "false");
+                data.put("Name", ds.get("Name").toString());
+                data.put("Display Name", ds.get("Display Name").toString());
+                data.put("ID", ds.get("ID").toString());
+                data.put("Profile Picture", ds.get("Profile Picture").toString());
+                db.collection("Profiles").document(viewProfileId).collection("Notifications")
+                        .document(newKey).set(data);
+
+
             }
         });
     }

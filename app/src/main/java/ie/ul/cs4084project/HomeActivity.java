@@ -6,13 +6,18 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -25,14 +30,20 @@ public class HomeActivity extends AppCompatActivity {
     private static  String email;
     public static  String name;
     private byte[] bytes;
-    List<Fragment> fragments;
-    StorageReference storageReference;
-    Feed feed;
+    private List<Fragment> fragments;
+    private StorageReference storageReference;
+    private Feed feed;
+    private notifications notifications;
+    private FirebaseFirestore db;
+    private int count;
+    private TabLayout tabLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         Intent intent = getIntent();
+        count = 0;
+        db = FirebaseFirestore.getInstance();
         id = intent.getStringExtra(MainActivity.ID);
         email = intent.getStringExtra(MainActivity.EMAIL);
         name = intent.getStringExtra(MainActivity.NAME);
@@ -61,6 +72,8 @@ public class HomeActivity extends AppCompatActivity {
 
     private void gotProfile(){
         feed = new Feed();
+        notifications = new notifications(id);
+
 
         fragments = new ArrayList<Fragment>();
 
@@ -68,7 +81,7 @@ public class HomeActivity extends AppCompatActivity {
         fragments.add(new settings(name, email, id));
         fragments.add(new Search());
         fragments.add(feed);
-        fragments.add(new notifications());
+        fragments.add(notifications);
         fragments.add(new profile(new String(bytes, StandardCharsets.UTF_8), id));//vpid
 ////
 
@@ -77,7 +90,7 @@ public class HomeActivity extends AppCompatActivity {
         ViewPager viewPager = findViewById(R.id.viewPager);
         viewPager.setAdapter(adapter);
 
-        TabLayout tabLayout = findViewById(R.id.tabLayout);
+        tabLayout = findViewById(R.id.tabLayout);
 
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.getTabAt(0).setIcon(R.drawable.ic_settings);
@@ -90,12 +103,22 @@ public class HomeActivity extends AppCompatActivity {
         tabLayout.getTabAt(3).setTag("Notifications");
         tabLayout.getTabAt(4).setIcon(R.drawable.ic_profile);
         tabLayout.getTabAt(4).setTag("Profile");
+
+        getCount();
+
+
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 Toast.makeText(getApplicationContext(), tab.getTag().toString(), Toast.LENGTH_SHORT).show();
                 if(tab.getTag().toString().equals("News Feed")){
                     //feed.refresh();
+                }
+                if(tab.getTag().toString().equals("Notifications")){
+                    if(notifications.getCheck()) {
+                        notifications.reload();
+                    }
+                    tab.removeBadge();
                 }
             }
 
@@ -106,6 +129,30 @@ public class HomeActivity extends AppCompatActivity {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+    }
+
+    public void getCount() {
+        db.collection("Profiles").document(id).collection("Notifications")
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                List<DocumentSnapshot> notifications = task.getResult().getDocuments();
+                for (DocumentSnapshot ds : notifications) {
+                    if (ds.get("Seen").toString().compareTo("false") == 0) {
+                        count++;
+                        db.collection("Profiles").document(id).collection("Notifications").document(ds.get("ID").toString())
+                                .update("Seen", "true");
+                        final BadgeDrawable badgeDrawable =tabLayout.getTabAt(3).getOrCreateBadge();
+                        badgeDrawable.setBackgroundColor(Color.rgb(0,255, 0));
+                        badgeDrawable.setBadgeTextColor(Color.BLACK);
+                        badgeDrawable.setMaxCharacterCount(5);
+                        badgeDrawable.setBadgeGravity(BadgeDrawable.TOP_END);
+                        badgeDrawable.setNumber(count);
+                    }
+                }
 
             }
         });
