@@ -108,6 +108,9 @@ public class SetDisplayName extends Fragment {
                                         }
                                     }
                                 }
+                                if(editText.getText().toString().isEmpty()){
+                                    go = false;
+                                }
                                 if (go) {
                                     Bundle bundle = getArguments();
                                     bundle.putString(ProfileSetUp.DISPLAY_NAME, editText.getText().toString());

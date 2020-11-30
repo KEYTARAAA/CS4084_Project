@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -69,9 +70,28 @@ public class settings extends Fragment {
         return inflater.inflate(R.layout.fragment_settings, container, false);
     }
 
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        Button profileUpdateButton = view.findViewById(R.id.profileUpdate);
+        profileUpdateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+             Navigation.findNavController(v).navigate((R.id.action_settings_to_profileUpdater));
+            }
+            });
+
+        Button securityUpdateButton = view.findViewById(R.id.securityUpdate);
+        securityUpdateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Navigation.findNavController(v).navigate((R.id.action_settings_to_securityUpdater));
+            }
+        });
+
+
         Button run = getActivity().findViewById(R.id.buttonSettingsRun);
         Button intervals = getActivity().findViewById(R.id.buttonSettingsIntervalTraining);
         run.setOnClickListener(new View.OnClickListener() {
@@ -100,6 +120,8 @@ public class settings extends Fragment {
             }
         });
     }
+
+
 
     /*public void run(View view){
         Intent intent = new Intent(getActivity(), Run.class);
