@@ -59,10 +59,9 @@ import id.zelory.compressor.Compressor;
  */
 public class Summary extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+
+    private static Uri none = Uri.parse("https://firebasestorage.googleapis.com/v0/b/cs4084-project-fae83.appspot.com/o/profilePics%2Ficon_profile.jpg?alt=media&token=b43fc088-1e21-4bab-98f4-045043d7cd76");
+
 
     // TODO: Rename and change types of parameters
 
@@ -73,7 +72,6 @@ public class Summary extends Fragment {
     private String name, email, id, profilePicture, displayName;
     private FirebaseFirestore db;
     private String dn;
-
     public Summary() {
         // Required empty public constructor
     }
@@ -90,8 +88,6 @@ public class Summary extends Fragment {
     public static Summary newInstance(String param1, String param2) {
         Summary fragment = new Summary();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -174,7 +170,12 @@ public class Summary extends Fragment {
             @Override
             public void onClick(View v) {
                 storageReference = FirebaseStorage.getInstance().getReference();
-                uploadProfilePic();
+                if( imageUri != null  ){
+                    uploadProfilePic();
+                } else {
+                    download_uri = none;
+                    next();
+                }
             }
         });
     }
@@ -216,7 +217,7 @@ public class Summary extends Fragment {
             download_uri = urlTask.getResult();
             next();
         }else{
-            download_uri = imageUri;
+            download_uri = none;
         }
     }
 
