@@ -48,6 +48,10 @@ public class HomeActivity extends AppCompatActivity {
         email = intent.getStringExtra(MainActivity.EMAIL);
         name = intent.getStringExtra(MainActivity.NAME);
         storageReference = FirebaseStorage.getInstance().getReference();
+        System.out.println("STORAGEEEEEEEEEEEEEEEE REFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"+storageReference.toString());
+        System.out.println("IDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"+id);
+        System.out.println("IPROFILESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS"+storageReference.child("profilesInfo").getName());
+        System.out.println("IPROFILESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS"+storageReference.child("profilesInfo").child(id+".txt").getName());
 
         Task<byte[]> task = storageReference.child("profilesInfo")
                 .child(id + ".txt").getBytes(1000000000).addOnCompleteListener(new OnCompleteListener<byte[]>() {
@@ -78,7 +82,7 @@ public class HomeActivity extends AppCompatActivity {
         fragments = new ArrayList<Fragment>();
 
 
-        fragments.add(new settings(name, email, id));
+        fragments.add(new settings(name, id, email));
         fragments.add(new Search());
         fragments.add(feed);
         fragments.add(notifications);
