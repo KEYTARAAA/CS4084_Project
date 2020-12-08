@@ -75,19 +75,30 @@ public class settings extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Button profileUpdateButton = view.findViewById(R.id.profileUpdate);
-        profileUpdateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-             Navigation.findNavController(v).navigate((R.id.action_settings_to_profileUpdater));
-            }
-            });
 
-        Button securityUpdateButton = view.findViewById(R.id.securityUpdate);
+
+
+        Button securityUpdateButton = getActivity().findViewById(R.id.securityUpdate);
         securityUpdateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Navigation.findNavController(v).navigate((R.id.action_settings_to_securityUpdater));
+                Intent intent = new Intent(getActivity(), securityUpdate.class);
+                intent.putExtra(MainActivity.ID, id);
+                intent.putExtra(MainActivity.EMAIL, email);
+                intent.putExtra(MainActivity.NAME, name);
+                startActivity(intent);
+            }
+        });
+
+        Button profileUpdateButton = getActivity().findViewById(R.id.profileUpdate);
+        profileUpdateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), profileUpdate.class);
+                intent.putExtra(MainActivity.ID, id);
+                intent.putExtra(MainActivity.EMAIL, email);
+                intent.putExtra(MainActivity.NAME, name);
+                startActivity(intent);
             }
         });
 

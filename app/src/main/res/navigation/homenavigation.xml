@@ -58,12 +58,6 @@
         <action
             android:id="@+id/action_settings_to_notifications"
             app:destination="@id/notifications" />
-        <action
-            android:id="@+id/action_settings_to_profileUpdater"
-            app:destination="@id/profileUpdater" />
-        <action
-            android:id="@+id/action_settings_to_securityUpdater"
-            app:destination="@id/securityUpdater" />
     </fragment>
     <fragment
         android:id="@+id/profile"
@@ -100,26 +94,5 @@
         <action
             android:id="@+id/action_notifications_to_profile"
             app:destination="@id/profile" />
-    </fragment>
-    <fragment
-        android:id="@+id/profileUpdater"
-        android:name="ie.ul.cs4084project.ProfileUpdater"
-        android:label="fragment_profile_updater"
-        tools:layout="@layout/fragment_profile_updater" >
-        <action
-            android:id="@+id/action_profileUpdater_to_settings"
-            app:destination="@id/settings" />
-        <action
-            android:id="@+id/action_profileUpdater_to_profile"
-            app:destination="@id/profile" />
-    </fragment>
-    <fragment
-        android:id="@+id/securityUpdater"
-        android:name="ie.ul.cs4084project.securityUpdater"
-        android:label="fragment_security_updater"
-        tools:layout="@layout/fragment_security_updater" >
-        <action
-            android:id="@+id/action_securityUpdater_to_settings"
-            app:destination="@id/settings" />
     </fragment>
 </navigation>
