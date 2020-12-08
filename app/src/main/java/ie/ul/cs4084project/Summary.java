@@ -72,6 +72,8 @@ public class Summary extends Fragment {
     private String name, email, id, profilePicture, displayName;
     private FirebaseFirestore db;
     private String dn;
+    private Uri none = Uri.parse("https://firebasestorage.googleapis.com/v0/b/cs4084-project-fae83.appspot.com/o/profilePics%2Ficon_profile.jpg?alt=media&token=b43fc088-1e21-4bab-98f4-045043d7cd76");
+
     public Summary() {
         // Required empty public constructor
     }
@@ -170,12 +172,13 @@ public class Summary extends Fragment {
             @Override
             public void onClick(View v) {
                 storageReference = FirebaseStorage.getInstance().getReference();
-                if( imageUri != null  ){
-                    uploadProfilePic();
-                } else {
-                    download_uri = none;
-                    next();
-                }
+
+               if( imageUri != null  ){
+                   uploadProfilePic();
+               } else {
+                   download_uri = none;
+                   next();
+               }
             }
         });
     }
