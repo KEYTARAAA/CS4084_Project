@@ -50,7 +50,7 @@ private boolean profileComplete = false;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private  String string;
+    private String string;
     private String userType, name, dateOB, age, gender, goal, bio, displayName, profilePic;
     private ArrayList<Fragment> fragments;
     private String viewProfileId, id, newKey, key;
@@ -59,7 +59,8 @@ private boolean profileComplete = false;
     private boolean done;
 
     public profile(String s, String viewProfileId) {
-         String[] array = s.split("\n");
+
+        String[] array = s.split("\n");
         userType = array[0].substring(12);
         name = array[1].substring(7);
         dateOB = array[2].substring(16);

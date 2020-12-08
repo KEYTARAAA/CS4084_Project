@@ -9,10 +9,10 @@
 
     <Button
         android:id="@+id/buttonSettingsRun"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:layout_marginEnd="50dp"
+        android:layout_width="130dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="336dp"
+        android:layout_marginEnd="52dp"
         android:text="Run"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView5" />
@@ -27,15 +27,38 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.131" />
 
     <Button
         android:id="@+id/buttonSettingsIntervalTraining"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="50dp"
+        android:layout_width="130dp"
+        android:layout_height="55dp"
+        android:layout_marginStart="44dp"
+        android:layout_marginTop="336dp"
         android:text="Interval"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+    <Button
+        android:id="@+id/profileUpdate"
+        android:layout_width="130dp"
+        android:layout_height="55dp"
+        android:layout_marginBottom="20dp"
+        android:text="Update Profile"
+        app:layout_constraintBottom_toTopOf="@+id/buttonSettingsRun"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toEndOf="@+id/securityUpdate" />
+
+    <Button
+        android:id="@+id/securityUpdate"
+        android:layout_width="130dp"
+        android:layout_height="55dp"
+        android:layout_marginBottom="20dp"
+        android:text="Update Security"
+        app:layout_constraintBottom_toTopOf="@+id/buttonSettingsIntervalTraining"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.161"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

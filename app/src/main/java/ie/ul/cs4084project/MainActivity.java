@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.PersistableBundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -31,15 +33,17 @@ public class MainActivity extends AppCompatActivity {
     protected static final String DISPLAY_NAME = "DISPLAY_NAME";
     private String name, id, email;
     private StorageReference storageReference;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        storageReference = FirebaseStorage.getInstance().getReference().child("profilesInfo");;
+        storageReference = FirebaseStorage.getInstance().getReference().child("profilesInfo");
+        ;
         setContentView(R.layout.activity_main);
     }
 
-    public void signIn(View view){
-        List<AuthUI.IdpConfig> providers= Arrays.asList(
+    public void signIn(View view) {
+        List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.EmailBuilder().build()
         );
 
@@ -51,43 +55,46 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == RC_SIGN_IN){
+        if (requestCode == RC_SIGN_IN) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
 
-            if(resultCode == RESULT_OK){
+            if (resultCode == RESULT_OK) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                        name = user.getDisplayName();
-                        email = user.getEmail();
-                        id =  user.getUid();
+                name = user.getDisplayName();
+                email = user.getEmail();
+                id = user.getUid();
 
-                        storageReference.child(id+".txt").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                done();
-                            }
+                storageReference.child(id + ".txt").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        done();
+                    }
 
 
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                setUp();
-                            }
-                        });
-            }else{
-                if(response == null){
-                    Toast.makeText(this, "Incorrect E-mail or Password!.", Toast.LENGTH_SHORT).show(); return;
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        setUp();
+                    }
+                });
+            } else {
+                if (response == null) {
+                    Toast.makeText(this, "Incorrect E-mail or Password!.", Toast.LENGTH_SHORT).show();
+                    return;
                 }
-                if(response.getError().getErrorCode() == ErrorCodes.NO_NETWORK){
+                if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
 
-                    Toast.makeText(this, "Error! No network.", Toast.LENGTH_SHORT).show(); return;
+                    Toast.makeText(this, "Error! No network.", Toast.LENGTH_SHORT).show();
+                    return;
                 }
             }
         }
     }
-    private void done(){
+
+    private void done() {
 
         Intent intent = new Intent(this, HomeActivity.class);
         intent.putExtra(ID, id);
@@ -97,7 +104,8 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, "Sign in successful!", Toast.LENGTH_SHORT).show();
         startActivity(intent);
     }
-    private void setUp(){
+
+    private void setUp() {
 
         Intent intent = new Intent(this, ProfileSetUp.class);
         intent.putExtra(ID, id);
