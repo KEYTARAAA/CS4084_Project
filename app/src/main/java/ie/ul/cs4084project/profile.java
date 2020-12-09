@@ -40,17 +40,9 @@ import java.util.Map;
  * create an instance of this fragment.
  */
 public class profile extends Fragment {
-private boolean profileComplete = false;
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private static String sViewProfileId, sId, sString;
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-    private String string;
     private String userType, name, dateOB, age, gender, goal, bio, displayName, profilePic;
     private ArrayList<Fragment> fragments;
     private String viewProfileId, id, newKey, key;
@@ -96,23 +88,14 @@ private boolean profileComplete = false;
         fragments = new ArrayList<Fragment>();
 
         fragments.add(new ProfilePosts(viewProfileId));
-        fragments.add(new ProfilePicsAndVids());
+        //fragments.add(new ProfilePicsAndVids());
         fragments.add(new ProfileAbout(bundle));
         fragments.add(new ProfileFriends(viewProfileId));
-        sString = string;
+        sString = s;
         sId = id;
         sViewProfileId = viewProfileId;
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment profile.
-     */
-    // TODO: Rename and change types and number of parameters
     public static profile newInstance(String param1, String param2) {
         profile fragment = new profile(sString, sViewProfileId);
         Bundle args = new Bundle();
@@ -133,7 +116,6 @@ private boolean profileComplete = false;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_profile, container, false);
     }
 
@@ -166,12 +148,12 @@ private boolean profileComplete = false;
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.getTabAt(0).setText("Posts");
         tabLayout.getTabAt(0).setTag("Posts");
-        tabLayout.getTabAt(1).setText("Pics");
-        tabLayout.getTabAt(1).setTag("Pics");
-        tabLayout.getTabAt(2).setText("About");
-        tabLayout.getTabAt(2).setTag("About Feed");
-        tabLayout.getTabAt(3).setText("Friends");
-        tabLayout.getTabAt(3).setTag("Friends");
+        //tabLayout.getTabAt(1).setText("Pics");
+        //tabLayout.getTabAt(1).setTag("Pics");
+        tabLayout.getTabAt(1).setText("About");
+        tabLayout.getTabAt(1).setTag("About Feed");
+        tabLayout.getTabAt(2).setText("Friends");
+        tabLayout.getTabAt(2).setTag("Friends");
     }
 
     private void setFriend(){
@@ -191,35 +173,6 @@ private boolean profileComplete = false;
             @Override
             public void onClick(View v) {
                 sendRequest();
-                /*Map<String, String> data = new HashMap();
-                data.put("Name", name);
-                data.put("Display Name", displayName);
-                data.put("ID", viewProfileId);
-                data.put("Profile Picture", profilePic);
-                db.collection("Profiles").document(id).collection("Friends")
-                        .document(viewProfileId).set(data);
-
-
-                 db.collection("Profiles").document(id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                     @Override
-                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                         DocumentSnapshot ds = task.getResult();
-                         String myProfilePicture = ds.get("Profile Picture").toString();
-                         String myName = ds.get("Name").toString();
-                         String myId = ds.get("ID").toString();
-                         String myDisplayName = ds.get("Display Name").toString();
-
-                         Map<String, String> myData = new HashMap<>();
-                         myData.put("Name", myName);
-                         myData.put("Display Name", myDisplayName);
-                         myData.put("ID", myId);
-                         myData.put("Profile Picture", myProfilePicture);
-                         db.collection("Profiles").document(viewProfileId).collection("Friends")
-                                 .document(id).set(myData);
-                         checkFriends();
-                     }
-                 });
-                checkFriends();*/
             }
         });
 
@@ -453,7 +406,7 @@ private boolean profileComplete = false;
 
 
             }
-        });//set notification in theirs aswel
+        });
 
         db.collection("Profiles").document(id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override

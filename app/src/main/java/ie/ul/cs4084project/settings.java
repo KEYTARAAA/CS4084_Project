@@ -131,25 +131,4 @@ public class settings extends Fragment {
             }
         });
     }
-
-
-
-    /*public void run(View view){
-        Intent intent = new Intent(getActivity(), Run.class);
-        intent.putExtra(MainActivity.ID, id);
-        intent.putExtra(MainActivity.EMAIL, email);
-        intent.putExtra(MainActivity.NAME, name);
-
-        startActivity(intent);
-    }
-
-    public void intervals(View view){
-
-        Intent intent = new Intent(getActivity(), Run.class);
-        intent.putExtra(MainActivity.ID, id);
-        intent.putExtra(MainActivity.EMAIL, email);
-        intent.putExtra(MainActivity.NAME, name);
-
-        startActivity(intent);
-    }*/
 }

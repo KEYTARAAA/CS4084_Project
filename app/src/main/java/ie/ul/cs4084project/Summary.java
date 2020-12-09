@@ -63,8 +63,6 @@ public class Summary extends Fragment {
     private static Uri none = Uri.parse("https://firebasestorage.googleapis.com/v0/b/cs4084-project-fae83.appspot.com/o/profilePics%2Ficon_profile.jpg?alt=media&token=b43fc088-1e21-4bab-98f4-045043d7cd76");
 
 
-    // TODO: Rename and change types of parameters
-
     private List<Fragment> fragments;
     private Bitmap compressor;
     private StorageReference storageReference;
@@ -72,8 +70,6 @@ public class Summary extends Fragment {
     private String name, email, id, profilePicture, displayName;
     private FirebaseFirestore db;
     private String dn;
-    private Uri none = Uri.parse("https://firebasestorage.googleapis.com/v0/b/cs4084-project-fae83.appspot.com/o/profilePics%2Ficon_profile.jpg?alt=media&token=b43fc088-1e21-4bab-98f4-045043d7cd76");
-
     public Summary() {
         // Required empty public constructor
     }

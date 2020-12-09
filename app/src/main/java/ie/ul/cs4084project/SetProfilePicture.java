@@ -111,7 +111,6 @@ public class SetProfilePicture extends Fragment {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if(resultCode == getActivity().RESULT_OK){
                 imageUri = result.getUri();
-                System.out.println("\n\n\n\n\nBefore " + imageUri.toString());
                 imageViewSetProfilePicture.setImageURI(imageUri);
 
             }else if(resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE){

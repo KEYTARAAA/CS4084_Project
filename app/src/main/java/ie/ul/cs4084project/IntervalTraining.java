@@ -62,15 +62,15 @@ public class IntervalTraining extends AppCompatActivity {
         int secs = (int) (sprintTime%60000)/1000;
         String timeLeftText = "";
         if(mins<10){
-            timeLeftText += "0"+Integer.toString(mins);
+            timeLeftText += "0"+mins;
         }else{
             timeLeftText += Integer.toString(mins);
         }
         timeLeftText +=  " : ";
         if(secs<10){
-            timeLeftText += "0"+Integer.toString(secs);
+            timeLeftText += "0"+secs;
         }else{
-            timeLeftText += Integer.toString(secs);
+            timeLeftText += secs;
         }
         countDown.setText(timeLeftText);
 
@@ -152,13 +152,13 @@ public class IntervalTraining extends AppCompatActivity {
         int secs = (int) (timeLeftCurrent%60000)/1000;
         String timeLeftText = "";
         if(mins<10){
-            timeLeftText += "0"+Integer.toString(mins);
+            timeLeftText += "0"+mins;
         }else{
-            timeLeftText += Integer.toString(mins);
+            timeLeftText += mins;
         }
         timeLeftText +=  " : ";
         if(secs<10){
-            timeLeftText += "0"+Integer.toString(secs);
+            timeLeftText += "0"+secs;
         }else{
             timeLeftText += Integer.toString(secs);
         }

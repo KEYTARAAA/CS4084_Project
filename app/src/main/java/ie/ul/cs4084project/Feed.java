@@ -67,8 +67,7 @@ import id.zelory.compressor.Compressor;
  */
 public class Feed extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private FirebaseFirestore db;
@@ -83,12 +82,11 @@ public class Feed extends Fragment {
     private Uri imageUri;
     private Bitmap compressor;
 
-    // TODO: Rename and change types of parameters
+
     private String mParam1;
     private String mParam2;
 
     public Feed() {
-        // Required empty public constructor
     }
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -107,7 +105,7 @@ public class Feed extends Fragment {
         DisplayMetrics metrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
         devicePixelWidth = metrics.widthPixels;
-        load10PostsI();
+        load10Posts();
     }
 
     /**
@@ -140,58 +138,12 @@ public class Feed extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-
-        //scrollView = getView().findViewById(R.id.scroll);
         return inflater.inflate(R.layout.fragment_feed, container, false);
     }
 
+
+
     private void load10Posts(){
-
-
-        final LinearLayout scrollView = getView().findViewById(R.id.scroll);
-        db.collection("PostsTime").get().addOnCompleteListener(
-                new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()) {
-                            List<DocumentSnapshot> posts = task.getResult().getDocuments();
-                            if (posts.size()>5) {
-                                System.out.println("Posts greater than 5");
-                                int tb = 0;
-                                for (int i = (posts.size() - 1); i > (posts.size() - 6); i--) {
-                                    DocumentSnapshot document = posts.get(i);
-                                    System.out.println(document.getId());
-                                    System.out.println(document.getData());
-                                    TextView p = new TextView(getContext());
-                                    p.setText(document.get("post").toString() + '\n' + '~' + document.get("author") + "\n\n");
-                                    scrollView.addView(p);
-                                }
-                            } else {
-                                System.out.println("Posts less than 5 ..... "+ posts.size());
-                                for (int i = (posts.size() - 1); i > posts.size()-2; i--) {
-
-                                    System.out.println("Posting 1");
-                                    DocumentSnapshot document = posts.get(i);
-                                    System.out.println("Posting 2");
-                                    System.out.println(document.getId());
-                                    System.out.println(document.getData());
-                                    TextView p = new TextView(getContext());
-                                    System.out.println("Posting 3");
-                                    p.setText(document.get("Post").toString() + '\n' + '~' + document.get("Author") + "\n\n");
-                                    scrollView.addView(p);
-                                    System.out.println("Posting 4");
-                                }
-                            }
-                        }else {
-                            Log.w("tag", "Error retrieving documents!", task.getException());
-                        }
-                    }
-                }
-        );
-    }
-
-    private void load10PostsI(){
 
 
         final LinearLayout scrollView = getView().findViewById(R.id.scroll);
@@ -203,7 +155,6 @@ public class Feed extends Fragment {
                         if(task.isSuccessful()) {
                             List<DocumentSnapshot> posts = task.getResult().getDocuments();
                             if (posts.size()>500000000) {
-                                System.out.println("Posts greater than 5");
                                 int tb = 0;
                                 for (int i = (posts.size() - 1); i > (posts.size() - 6); i--) {
                                     DocumentSnapshot document = posts.get(i);
@@ -212,7 +163,6 @@ public class Feed extends Fragment {
                                     scrollView.addView(p);
                                 }
                             } else {
-                                System.out.println("Posts less than 5 ..... "+ posts.size());
                                 for (int i = (posts.size() - 1); i >-1; i--) {
                                     DocumentSnapshot document = posts.get(i);
                                     if (!document.get("image").toString().equals("")) {
@@ -230,8 +180,6 @@ public class Feed extends Fragment {
                                         scrollView.addView(textView);
 
                                     } else{
-                                        System.out.println(document.getId());
-                                        System.out.println(document.getData());
                                         TextView p = new TextView(getContext());
                                         p.setText(document.get("post").toString() + '\n' + '~' + document.get("name") + "\n\n");
                                         scrollView.addView(p);
@@ -284,7 +232,6 @@ public class Feed extends Fragment {
                 uploadPost();
             }
         }
-        ByteArrayOutputStream byteArrayInputStream = new ByteArrayOutputStream();
     }
 
     private void uploadImage(Task<UploadTask.TaskSnapshot> task) {
@@ -353,7 +300,6 @@ public class Feed extends Fragment {
 
 
     private void uploadPost() {
-        final Uri download_uri;
 
         Map<String,String> userData = new HashMap<String, String>();
         userData.put("name", name);

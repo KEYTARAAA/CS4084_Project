@@ -243,53 +243,15 @@ public class RunFragment extends Fragment {
 
     public void finish(final String time) {
 
-        //all.add(currentLocation.getPosition());
+
         kmCounter = currentD;
         addMileStone();
 
-        /*if (count == 0) {
-
-            LatLng testLL = new LatLng(52.663297, -8.578516);
-            MarkerOptions mo = new MarkerOptions().position(testLL).title("test");
-            Marker m = mMap.addMarker(mo);
-            all.add(testLL);
-            PolylineOptions po = new PolylineOptions().addAll(all);
-            mMap.addPolyline(po);
-            count++;
-        } else if (count == 1) {
-
-            LatLng testLL = new LatLng(52.665141, -8.579926);
-            MarkerOptions mo = new MarkerOptions().position(testLL).title("test");
-            Marker m = mMap.addMarker(mo);
-            all.add(testLL);
-            PolylineOptions po = new PolylineOptions().addAll(all);
-            mMap.addPolyline(po);
-            count++;
-        }else if (count == 2) {
-
-            LatLng testLL = new LatLng(52.666457, -8.570910);
-            MarkerOptions mo = new MarkerOptions().position(testLL).title("test");
-            Marker m = mMap.addMarker(mo);
-            all.add(testLL);
-            PolylineOptions po = new PolylineOptions().addAll(all);
-            mMap.addPolyline(po);
-            count++;
-        }else if (count == 3) {
-
-            LatLng testLL = new LatLng(52.662033, -8.568834);
-            MarkerOptions mo = new MarkerOptions().position(testLL).title("test");
-            Marker m = mMap.addMarker(mo);
-            all.add(testLL);
-            PolylineOptions po = new PolylineOptions().addAll(all);
-            mMap.addPolyline(po);
-            count++;
-        }
-        if(count>5){*/
 
             LatLngBounds.Builder builder = new LatLngBounds.Builder();// To make faster only add the 4 milestones on most nirthernlyy, westernly.. ect
         for (LatLng latLng : all) {
             builder.include(latLng);
-        //}
+
 
         LatLngBounds bounds = builder.build();
         int padding = 50;

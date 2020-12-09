@@ -42,7 +42,7 @@ public class ProfileFriends extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
+
     private static String viewProfileId;
     private FirebaseFirestore db;
     private LinearLayout linearLayout;
