@@ -7,7 +7,7 @@ This app uses a couple of different technologies such as;
 * Google Maps
 * Mobile Permissions
 
-### [Firebase] (https://console.firebase.google.com/u/0/project/cs4084-project-fae83/overview)
+### [Firebase](https://console.firebase.google.com/u/0/project/cs4084-project-fae83/overview)
 This app uses firebase for a lot of different functions
 #### Authentication
 The Email login is handled by the autentication functions in Firebase
