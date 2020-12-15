@@ -6,14 +6,14 @@ You can share your own fitness journey by sharing your workouts, experiences and
 
 ## Getting Started:
 You can make your own new account by:
-*Accepting the permissions asked by the app
-*Signing in with your Email Account
-*Following the account set up instructions
+* Accepting the permissions asked by the app
+* Signing in with your Email Account
+* Following the account set up instructions
 
 
 but for the purposes of having friends and seeing your friends posts and notifications we have made a sample account for you with these already in place
-** Email: test@gmail.com **
-** Passowrd: test123 **
+**Email: test@gmail.com**
+**Passowrd: test123**
 This will let you see your friends posts and view a friend request
 
 
