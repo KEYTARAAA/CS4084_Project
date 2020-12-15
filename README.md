@@ -1,8 +1,19 @@
 # CS4084_Project
-You can make your own new account to see the account set up 
+The purpose f this app is to be a fitness buddy and to keep you motivated while on your journey to fitness
+It does this by giving you different tools that you can use to workout with (eg a run tracker or interval training timer)
+It also allows you to make posts and view your friends posts so that you can help to keep each other motivated.
+You can share your own fitness journey by sharing your workouts, experiences and pictures on your profile.
+
+## Getting Started:
+You can make your own new account by:
+*Accepting the permissions asked by the app
+*Signing in with your Email Account
+*Following the account set up instructions
+
+
 but for the purposes of having friends and seeing your friends posts and notifications we have made a sample account for you with these already in place
-Email: test@gmail.com
-Passowrd: test123
+** Email: test@gmail.com **
+** Passowrd: test123 **
 This will let you see your friends posts and view a friend request
 
 
